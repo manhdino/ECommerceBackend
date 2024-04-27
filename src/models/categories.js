@@ -11,9 +11,17 @@ module.exports = (sequelize, DataTypes) => {
   }
   Categories.init(
     {
-      name: DataTypes.STRING,
-      created_at: DataTypes.DATE,
-      updated_at: DataTypes.DATE,
+      name: {
+        type: DataTypes.STRING(20),
+      },
+      created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+      },
+      updated_at: {
+        allowNull: false,
+        type: DataTypes.DATE,
+      },
     },
     {
       sequelize,

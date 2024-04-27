@@ -8,15 +8,30 @@ module.exports = (sequelize, DataTypes) => {
         targetKey: "id",
         as: "categories",
       });
+      Products.hasMany(models.Product_Images, {
+        foreignKey: "product_id",
+        as: "product_images",
+      });
     }
   }
   Products.init(
     {
-      cate_id: DataTypes.INTEGER,
-      name: DataTypes.STRING(100),
-      description: DataTypes.TEXT,
-      original_price: DataTypes.DECIMAL(10, 2),
-      sale_price: DataTypes.DECIMAL(10, 2),
+      cate_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+      },
+      name: {
+        type: DataTypes.STRING(100),
+      },
+      description: {
+        type: DataTypes.TEXT,
+      },
+      original_price: {
+        type: DataTypes.DECIMAL(10, 2),
+      },
+      sale_price: {
+        type: DataTypes.DECIMAL(10, 2),
+      },
       quantity: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
@@ -34,8 +49,8 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 0,
       },
       created_at: {
-        allowNull: false,
         type: DataTypes.DATE,
+        allowNull: false,
       },
       updated_at: {
         allowNull: false,
