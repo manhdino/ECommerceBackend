@@ -21,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "moongoose": "^0.0.5",
     "mysql2": "^3.9.7",
+    "nodemon": "^3.1.0",
     "sequelize": "^6.37.3",
     "uniqid": "^5.4.0"
   },
