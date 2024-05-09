@@ -1,30 +1,33 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class Product_Images extends Model {
+  class Cart extends Model {
     static associate(models) {
-      Product_Images.belongsTo(models.Products, {
-        foreignKey: "product_id",
+      Cart.belongsTo(models.Product, {
         targetKey: "id",
+        foreignKey: "product_id",
         as: "products",
+      });
+      Cart.belongsTo(models.User, {
+        targetKey: "id",
+        foreignKey: "user_id",
+        as: "user",
       });
     }
   }
-  Product_Images.init(
+  Cart.init(
     {
       product_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      image_filename: {
-        type: DataTypes.STRING,
-      },
-      url: {
-        type: DataTypes.STRING,
+      user_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
       },
       created_at: {
-        type: DataTypes.DATE,
         allowNull: false,
+        type: DataTypes.DATE,
       },
       updated_at: {
         allowNull: false,
@@ -33,8 +36,9 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       sequelize,
-      modelName: "Product_Images",
+      modelName: "Cart",
+      timestamps: false,
     }
   );
-  return Product_Images;
+  return Cart;
 };

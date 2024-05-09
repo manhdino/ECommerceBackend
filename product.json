@@ -1,0 +1,26 @@
+[
+    {
+        "id": "124e13b9-2d54-4b2f-a74d-a77b362d6ead",
+        "category_id": 1,
+        "name": "Ultraboost - White/Black",
+        "seller": "Adidas",
+        "price": 420,
+        "stock": 20,
+        "ratings": 4,
+        "img": "https://bizweb.dktcdn.net/thumb/1024x1024/100/347/092/products/z-db3197-02.jpg",
+        "quantity": 1,
+        "description": "Inspired by the original low-profile tennis shoe, the Nike Killshot 2 updates the upper with a variety of textured leathers to create a fresh look. From soft suedes to smooth leathers with the perfect sheen, it's court-side attitude with a modern touch."
+    },
+    {
+        "id": "02871edc-272b-4e20-b5fafd-b32681213b3c",
+        "category_id": 7,
+        "name": "CLASSIC CHELSEA BOOTS - BO01",
+        "seller": "Boot",
+        "price": 37,
+        "stock": 14,
+        "ratings": 4,
+        "img": "https://bizweb.dktcdn.net/thumb/1024x1024/100/292/624/products/z5010900617271-c1000c7338ab65137fb11311c7161f87.jpg?v=1703574544307",
+        "quantity": 1,
+        "description": "Inspired by the original low-profile tennis shoe, the Nike Killshot 2 updates the upper with a variety of textured leathers to create a fresh look. From soft suedes to smooth leathers with the perfect sheen, it's court-side attitude with a modern touch."
+    }
+]

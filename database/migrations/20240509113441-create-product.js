@@ -9,41 +9,50 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      cate_id: {
-        type: Sequelize.DataTypes.INTEGER,
+      category_id: {
+        type: Sequelize.INTEGER,
         references: {
-          model: "categories",
+          model: {
+            tableName: "categories",
+          },
           key: "id",
         },
         allowNull: false,
+        onDelete: "CASCADE",
       },
       name: {
         type: Sequelize.STRING(100),
+        allowNull: false,
       },
       description: {
         type: Sequelize.TEXT,
+        allowNull: false,
       },
-      original_price: {
-        type: Sequelize.DECIMAL(10, 2),
+      seller: {
+        type: Sequelize.STRING(20),
+        allowNull: false,
       },
-      sale_price: {
+      price: {
         type: Sequelize.DECIMAL(10, 2),
+        allowNull: false,
       },
       quantity: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 1,
+      },
+      ratings: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
+      stock: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
         defaultValue: 0,
       },
-      sold: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-      },
-      vat: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
-      },
-      warrenty: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
+      img: {
+        type: Sequelize.TEXT,
+        allowNull: false,
       },
       created_at: {
         allowNull: false,
@@ -55,7 +64,7 @@ module.exports = {
       },
     });
   },
-  async down(queryInterface) {
+  async down(queryInterface, Sequelize) {
     await queryInterface.dropTable("Products");
   },
 };

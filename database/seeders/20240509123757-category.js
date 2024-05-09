@@ -1,46 +1,48 @@
 "use strict";
 
+/** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  up: (queryInterface) => {
-    return queryInterface.bulkInsert("Categories", [
+  async up(queryInterface) {
+    await queryInterface.bulkInsert("Categories", [
       {
-        name: "Laptop",
+        name: "Adidas",
         created_at: new Date(),
         updated_at: new Date(),
       },
       {
-        name: "Phone",
+        name: "Nike",
         created_at: new Date(),
         updated_at: new Date(),
       },
       {
-        name: "Earphone",
+        name: "Oxford",
         created_at: new Date(),
         updated_at: new Date(),
       },
       {
-        name: "Screen",
+        name: "Loafer",
         created_at: new Date(),
         updated_at: new Date(),
       },
       {
-        name: "Playstation",
+        name: "Air Jordan",
         created_at: new Date(),
         updated_at: new Date(),
       },
       {
-        name: "Refrigerator",
+        name: "Yezzy",
         created_at: new Date(),
         updated_at: new Date(),
       },
       {
-        name: "Television",
+        name: "Boot",
         created_at: new Date(),
         updated_at: new Date(),
       },
     ]);
   },
-  down: (queryInterface) => {
-    return queryInterface.bulkDelete("Categories", null, {});
+
+  async down(queryInterface) {
+    await queryInterface.bulkDelete("Categories", null, {});
   },
 };
