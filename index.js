@@ -11,6 +11,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
+const userRouter = require("./src/routes/api");
+app.use("/api/user", userRouter);
+
 app.listen(PORT, () => {
   console.log(`Server is running  at http://localhost:${PORT}`);
 });
