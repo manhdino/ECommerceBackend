@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-const userRouter = require("./src/routes/api");
+const userRouter = require("./routes/auth.route.js");
 app.use("/api/user", userRouter);
 
 app.listen(PORT, () => {

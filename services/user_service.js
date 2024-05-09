@@ -1,5 +1,5 @@
 const { where } = require("sequelize");
-const db = require("../models");
+const db = require("../database/models");
 const authService = require("./auth_service")
 // const {Op} = require('sequelize');
 const bcrypt = require('bcrypt');

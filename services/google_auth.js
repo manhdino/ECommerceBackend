@@ -1,7 +1,7 @@
 const passport = require('passport')
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const {verifyToken, generateToken} = require('./auth_service')
-const db = require('../models')
+const db = require('../database/models')
 const User = db.User
 
 const callbackStrategy = async (accessToken, refreshToken, profile, cb) => {

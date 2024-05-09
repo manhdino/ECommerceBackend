@@ -1,6 +1,6 @@
 // API Routes
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const { getAllUser, testAccessDenied } = require("../controllers/user_controller.js");
+const { getAllUser, testAccessDenied } = require("../controllers/user_controller");
 const passport = require('passport');
 const router = require('express').Router();
 
