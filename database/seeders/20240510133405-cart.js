@@ -8,7 +8,7 @@ module.exports = {
     let [products] = await queryInterface.sequelize.query(
       `SELECT id from products;`
     );
-    await queryInterface.bulkInsert("Carts", [
+    await queryInterface.bulkInsert("carts", [
       {
         product_id: products[0].id,
         user_id: users[0].id,
@@ -43,6 +43,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("Carts", null, {});
+    await queryInterface.bulkDelete("carts", null, {});
   },
 };

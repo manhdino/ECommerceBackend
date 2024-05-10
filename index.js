@@ -23,7 +23,7 @@ const options = {
     },
     servers: [
       {
-        url: "ecommercebackend-production-ad86.up.railway.app/api",
+        url: "https://ecommerebackend.up.railway.app/api",
       },
     ],
   },

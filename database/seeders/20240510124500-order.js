@@ -5,7 +5,7 @@ module.exports = {
   async up(queryInterface) {
     let [users] = await queryInterface.sequelize.query(`SELECT id from users;`);
     users = users.sort((a, b) => a.id - b.id);
-    await queryInterface.bulkInsert("Orders", [
+    await queryInterface.bulkInsert("orders", [
       {
         ordered_by: users[0].id,
         payment_method: "cod",
@@ -34,6 +34,6 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    await queryInterface.bulkDelete("Orders", null, {});
+    await queryInterface.bulkDelete("orders", null, {});
   },
 };

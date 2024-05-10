@@ -28,7 +28,7 @@ module.exports = {
           updated_at: new Date(),
         });
       });
-      await queryInterface.bulkInsert("Products", productsWithCategoryIds);
+      await queryInterface.bulkInsert("products", productsWithCategoryIds);
       console.log("Data inserted successfully.");
     } catch (error) {
       console.error("Error inserting data:", error);
@@ -36,6 +36,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("Products", null, {});
+    await queryInterface.bulkDelete("products", null, {});
   },
 };

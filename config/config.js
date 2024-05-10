@@ -1,6 +1,6 @@
 const fs = require("fs");
 require("dotenv").config();
-
+console.log(process.env.DATABASE_ENV);
 module.exports = {
   environment: process.env.DATABASE_ENV || "development",
   development: {
