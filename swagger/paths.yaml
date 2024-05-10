@@ -1,0 +1,128 @@
+paths:
+   /auth/sign-in:
+    post:
+      tags:
+        - auth
+      description: Sign In to Coding Blog Website
+      operationId: sign-in
+      requestBody:
+        description: Sign In Information
+        content:
+          application/json:
+            schema:
+               type: object
+               properties:
+                email:
+                 type: string
+                 example: "manhnv2k1@gmail.com"
+                password:
+                 type: string
+                 example: "12345678"
+        required: true
+      responses:
+        '200':
+          description: Sign in successfully!
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: object
+                 properties:
+                   user:
+                    type: object
+                    $ref: '#/components/schemas/User'
+                   access_token:
+                     type: string
+                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTcxNDk2NjIxNCwiZXhwIjoxNzE0OTY5ODE0fQ.9TGf42_7umYPLE2pXkOdQ-HQgreKKK5Nwm6OyZIRwIU"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+             
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              type: object
+              properties:
+               success:
+                 type: string
+                 example: false
+               status:
+                 type: integer
+                 example: 404
+               message:
+                 type: string
+                 example: "Email not found"  
+   /auth/sign-up:
+    post:
+      tags:
+        - auth
+      description: Sign Up for Coding Blog Website
+      operationId: sign-up
+      requestBody:
+        description: Sign Up Information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: "user@gmail.com"
+                password:
+                  type: string
+                  example: "yourpassword"
+                confirmPassword:
+                  type: string
+                  example: "yourpassword"
+      responses:
+        '200':
+          description: Sign up successfully!
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: object
+                 properties:
+                  user:
+                    type: object
+                    $ref: '#/components/schemas/User'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+        '404':
+          description: Invalid Input 
+          content:
+           application/json:
+            schema:
+              type: object
+              properties:
+               success:
+                 type: string
+                 example: false
+               status:
+                 type: integer
+                 example: 404
+               message:
+                 type: string
+                 example: "Email is already in used"  
+
+ 

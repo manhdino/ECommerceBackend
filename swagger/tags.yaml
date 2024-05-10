@@ -1,0 +1,14 @@
+
+tags:
+  - name: auth
+    description: Sign In, Sign Up
+  - name: user
+    description: Manage users
+  - name: category
+    description: Manage category
+  - name: product
+    description: Manage product
+  - name: order
+    description: Manage order
+  - name: cart
+    description: Manage order

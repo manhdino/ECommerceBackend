@@ -1,0 +1,145 @@
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        category_id:
+           type: integer
+           example: 6
+        user_id:
+           type: integer
+           example: 6
+        related_id:
+           type: integer
+           example: 0
+        locale:
+           type: string
+           example: "en_us"
+        title:
+          type: string
+          example: "Learn about Reactjs for beginners"
+        slug:
+          type: string
+          example: "learn-about-reactjs-for-beginners"
+        content:
+          type: string
+          example: "Content of post learn about Reactjs for beginners"
+        created_at:
+          type: string
+          example: "2024-05-05T10:42:20.000Z"
+        updated_at:
+          type: string
+          example: "2024-05-05T10:42:20.000Z"     
+    Language:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "English"
+        locale:
+          type: string
+          example: "en_us"
+        flag:
+          type: string
+          example: "https://www.countryflags.io/us/flat/64.png"
+        created_at:
+          type: string
+          example: "2024-05-05T10:42:20.000Z"
+        updated_at:
+          type: string
+          example: "2024-05-05T10:42:20.000Z"     
+    User:  
+     type: object
+     properties:
+      id:
+        type: integer
+        format: int64
+      username:
+        type: string
+        maxLength: 30
+      email:
+        type: string
+        format: email
+        maxLength: 30
+      role:
+        type: string
+        example: owner
+      password:
+        type: string
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+     example:
+      id: 1
+      username: "john_doe@gmail.com"
+      email: "john_doe@gmail.com"
+      role: "owner"
+      created_at: "2024-05-06T12:00:00Z"
+      updated_at: "2024-05-06T12:00:00Z"
+    Category:
+     type: object
+     properties:
+      id:
+        type: integer
+        format: int64
+      name:
+        type: string
+        maxLength: 20
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+     example:
+      id: 1
+      name: "reactjs"
+      created_at: "2024-05-06T12:00:00Z"
+      updated_at: "2024-05-06T12:00:00Z"
+    DetailPost:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        related_id:
+           type: integer
+           example: 0
+        locale:
+           type: string
+           example: "en_us"
+        title:
+          type: string
+          example: "Learn about Reactjs for beginners"
+        slug:
+          type: string
+          example: "learn-about-reactjs-for-beginners"
+        content:
+          type: string
+          example: "Content of post learn about Reactjs for beginners"
+        created_at:
+          type: string
+          example: "2024-05-05T10:42:20.000Z"
+        updated_at:
+          type: string
+          example: "2024-05-05T10:42:20.000Z" 
+        author: 
+          type: object
+          $ref: '#/components/schemas/User'
+        category:
+          type: object
+          $ref: '#/components/schemas/Category'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
