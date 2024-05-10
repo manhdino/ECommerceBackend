@@ -1,9 +1,9 @@
-const db = require("models");
+const model = require("models");
 
 module.exports = {
   index: async () => {
     try {
-      const response = await db.Category.findAll({});
+      const response = await model.Category.findAll({});
       if (response) {
         return {
           data: response,
@@ -20,7 +20,7 @@ module.exports = {
   },
   create: async (name) => {
     try {
-      const checkCategory = await db.Category.findOne({
+      const checkCategory = await model.Category.findOne({
         where: {
           name: name,
         },
@@ -30,7 +30,7 @@ module.exports = {
           error: "Category name has been used",
         };
       }
-      const response = await db.Category.create({
+      const response = await model.Category.create({
         name: name,
         created_at: new Date(),
         updated_at: new Date(),
@@ -52,7 +52,7 @@ module.exports = {
   },
   show: async (categoryId) => {
     try {
-      const response = await db.Category.findByPk(categoryId);
+      const response = await model.Category.findByPk(categoryId);
       if (!response) {
         return {
           error: "Category not found",
@@ -69,7 +69,7 @@ module.exports = {
   },
   update: async (categoryId, name) => {
     try {
-      const checkCategory = await db.Category.findByPk(categoryId);
+      const checkCategory = await model.Category.findByPk(categoryId);
       if (!checkCategory) {
         return {
           error: "Category not found",
@@ -100,7 +100,7 @@ module.exports = {
   },
   destroy: async (categoryId) => {
     try {
-      const checkCategory = await db.Category.findByPk(categoryId);
+      const checkCategory = await model.Category.findByPk(categoryId);
       if (!checkCategory) {
         return {
           error: "Category not found or has been deleted",
