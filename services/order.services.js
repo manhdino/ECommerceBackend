@@ -1,5 +1,4 @@
-const model = require("models");
-const { or } = require("sequelize");
+const model = require("../database/models");
 
 module.exports = {
   index: async () => {

@@ -39,23 +39,6 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      is_blocked: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-      },
-      googleId: {
-        type: Sequelize.STRING
-      },
-      refreshToken: {
-        type: Sequelize.STRING
-      },
-      passwordCode: {
-        type: Sequelize.STRING
-      },
-      codeResetExpires: {
-        type: Sequelize.DATE
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -3,22 +3,36 @@ const fs = require("fs");
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert("Products", [
-      {
-        category_id: 1,
-        name: "Ultraboost - White/Black",
-        seller: "Adidas",
-        price: 420,
-        stock: 20,
-        ratings: 4,
-        img: "https://bizweb.dktcdn.net/thumb/1024x1024/100/347/092/products/z-db3197-02.jpg",
-        quantity: 1,
-        description:
-          "Inspired by the original low-profile tennis shoe, the Nike Killshot 2 updates the upper with a variety of textured leathers to create a fresh look. From soft suedes to smooth leathers with the perfect sheen, it's court-side attitude with a modern touch.",
-        created_at: new Date(),
-        updated_at: new Date(),
-      },
-    ]);
+    try {
+      // Đọc dữ liệu từ tệp JSON
+      let [categories] = await queryInterface.sequelize.query(
+        `SELECT id from categories;`
+      );
+      categories = categories.sort((a, b) => a.id - b.id);
+      const products = JSON.parse(fs.readFileSync("product.json", "utf8"));
+      const productsWithCategoryIds = [];
+      products.forEach((product, index) => {
+        const categoryIdIndex = Math.floor(index / 10);
+        const categoryId = categories[categoryIdIndex].id;
+        productsWithCategoryIds.push({
+          category_id: categoryId,
+          name: product.name,
+          seller: product.seller,
+          price: product.price,
+          stock: product.stock,
+          ratings: product.ratings,
+          img: product.img,
+          quantity: product.quantity,
+          description: product.description,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
+      });
+      await queryInterface.bulkInsert("Products", productsWithCategoryIds);
+      console.log("Data inserted successfully.");
+    } catch (error) {
+      console.error("Error inserting data:", error);
+    }
   },
 
   async down(queryInterface, Sequelize) {
