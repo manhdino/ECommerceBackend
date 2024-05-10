@@ -17,7 +17,11 @@ module.exports = {
   },
   show: async (req, res) => {
     try {
-      const { userId } = req.user;
+      const { userId, role } = req.user;
+      const userIdParam = req.params.userId;
+      if (userIdParam != userId || role != "admin") {
+        return rs.unauthorized(res, "Unauthorized");
+      }
       const response = await userServices.show(userId);
       if (response.error) {
         return rs.error(res, response.error);
