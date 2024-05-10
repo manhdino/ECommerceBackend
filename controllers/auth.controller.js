@@ -37,7 +37,7 @@ module.exports = {
         return rs.error(res, response.error);
       }
       if (response) {
-        return rs.ok(res, response);
+        return rs.success(res, response);
       }
     } catch (error) {
       return rs.error(res, error.message);

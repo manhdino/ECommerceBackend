@@ -35,13 +35,34 @@ module.exports = {
       };
     }
   },
-  destroy: async (data) => {
+  update: async (userId) => {
     try {
-      const { userId } = data;
       const checkUser = await model.User.findByPk(userId);
       if (!checkUser) {
         return {
           error: "User not found",
+        };
+      }
+      // const response = await model.Language.update();
+      const response = 1;
+      return {
+        data:
+          response == 1
+            ? "Language updated successfully"
+            : "Failed to update language",
+      };
+    } catch (error) {
+      return {
+        error: error.message,
+      };
+    }
+  },
+  destroy: async (userId) => {
+    try {
+      const checkUser = await model.User.findByPk(userId);
+      if (!checkUser) {
+        return {
+          error: "User not found or has been deleted",
         };
       }
       const response = await model.User.destroy({

@@ -9,7 +9,7 @@ module.exports = {
         return rs.error(res, response.error);
       }
       if (response) {
-        return rs.ok(res, response);
+        return rs.success(res, response);
       }
     } catch (error) {
       return rs.error(res, error.message);
@@ -17,39 +17,13 @@ module.exports = {
   },
   show: async (req, res) => {
     try {
-      const userId = req.params.userId;
+      const { userId } = req.user;
       const response = await userServices.show(userId);
       if (response.error) {
         return rs.error(res, response.error);
       }
       if (response) {
-        return rs.ok(res, response);
-      }
-    } catch (error) {
-      return rs.error(res, error.message);
-    }
-  },
-  create: async (req, res) => {
-    try {
-      const { role, userId } = req.user;
-
-      if (!userId && role != "owner") {
-        return rs.authorization(res, "Unauthorized");
-      }
-      const { error } = validation.create({ ...req.body, ...req.query });
-      if (error) {
-        return rs.error(res, error.details[0].message);
-      }
-      const response = await postService.create({
-        ...req.body,
-        ...req.query,
-        userId,
-      });
-      if (response.error) {
-        return rs.error(res, response.error);
-      }
-      if (response) {
-        return rs.ok(res, response);
+        return rs.success(res, response);
       }
     } catch (error) {
       return rs.error(res, error.message);
@@ -57,31 +31,13 @@ module.exports = {
   },
   update: async (req, res) => {
     try {
-      const { role, userId } = req.user;
-
-      if (!userId && role != "owner") {
-        return rs.authorization(res, "Unauthorized");
-      }
-
-      const { error } = validation.update({
-        ...req.body,
-        ...req.query,
-        ...req.params,
-      });
-      if (error) {
-        return rs.error(res, error.details[0].message);
-      }
-      const response = await postService.update({
-        ...req.body,
-        ...req.query,
-        ...req.params,
-        userId,
-      });
+      const userId = req.params.userId;
+      const response = await userServices.update(userId);
       if (response.error) {
         return rs.error(res, response.error);
       }
       if (response) {
-        return rs.ok(res, response);
+        return rs.success(res, response);
       }
     } catch (error) {
       return rs.error(res, error.message);
@@ -89,21 +45,13 @@ module.exports = {
   },
   destroy: async (req, res) => {
     try {
-      const { role, userId } = req.user;
-
-      if (!userId && role != "owner") {
-        return rs.authorization(res, "Unauthorized");
-      }
-      const { error } = validation.destroy(req.params);
-      if (error) {
-        return rs.error(res, error.details[0].message);
-      }
-      const response = await postService.destroy({ ...req.params, userId });
+      const userId = req.params.userId;
+      const response = await userServices.destroy(userId);
       if (response.error) {
         return rs.error(res, response.error);
       }
       if (response) {
-        return rs.ok(res, response);
+        return rs.success(res, response);
       }
     } catch (error) {
       return rs.error(res, error.message);
