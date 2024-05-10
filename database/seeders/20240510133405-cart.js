@@ -3,12 +3,12 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    let [users] = await queryInterface.sequelize.query(`SELECT id from users;`);
+    let [users] = await queryInterface.sequelize.query(`SELECT id from Users;`);
     users = users.sort((a, b) => a.id - b.id);
     let [products] = await queryInterface.sequelize.query(
-      `SELECT id from products;`
+      `SELECT id from Products;`
     );
-    await queryInterface.bulkInsert("carts", [
+    await queryInterface.bulkInsert("Carts", [
       {
         product_id: products[0].id,
         user_id: users[0].id,
@@ -43,6 +43,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("carts", null, {});
+    await queryInterface.bulkDelete("Carts", null, {});
   },
 };

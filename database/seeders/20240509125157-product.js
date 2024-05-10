@@ -6,7 +6,7 @@ module.exports = {
     try {
       // Đọc dữ liệu từ tệp JSON
       let [categories] = await queryInterface.sequelize.query(
-        `SELECT id from categories;`
+        `SELECT id from Categories;`
       );
       categories = categories.sort((a, b) => a.id - b.id);
       const products = JSON.parse(fs.readFileSync("product.json", "utf8"));
@@ -28,7 +28,7 @@ module.exports = {
           updated_at: new Date(),
         });
       });
-      await queryInterface.bulkInsert("products", productsWithCategoryIds);
+      await queryInterface.bulkInsert("Products", productsWithCategoryIds);
       console.log("Data inserted successfully.");
     } catch (error) {
       console.error("Error inserting data:", error);
@@ -36,6 +36,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("products", null, {});
+    await queryInterface.bulkDelete("Products", null, {});
   },
 };

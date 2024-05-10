@@ -4,13 +4,13 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     let [orders] = await queryInterface.sequelize.query(
-      `SELECT id from orders;`
+      `SELECT id from Orders;`
     );
     orders = orders.sort((a, b) => a.id - b.id);
     let [products] = await queryInterface.sequelize.query(
-      `SELECT id,price from products;`
+      `SELECT id,price from Products;`
     );
-    await queryInterface.bulkInsert("orderDetails", [
+    await queryInterface.bulkInsert("OrderDetails", [
       {
         order_id: orders[0].id,
         product_id: products[0].id,
@@ -56,6 +56,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete("orderDetails", null, {});
+    await queryInterface.bulkDelete("OrderDetails", null, {});
   },
 };
