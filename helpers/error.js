@@ -7,13 +7,6 @@ module.exports = {
       message: "ok",
     });
   },
-  notFound: (res) => {
-    return res.status(404).send({
-      success: false,
-      status: 404,
-      message: "Cannot find resouces",
-    });
-  },
   validate: (res, message) => {
     return res.status(422).send({
       success: false,
