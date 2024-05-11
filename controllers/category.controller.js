@@ -35,7 +35,7 @@ module.exports = {
   },
   create: async (req, res) => {
     try {
-      const { error } = validator({ name }, req.params);
+      const { error } = validator({ name }, req.body);
 
       if (error) {
         return rs.validate(res, error.details[0].message);
