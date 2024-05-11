@@ -31,6 +31,31 @@ components:
       role: "owner"
       created_at: "2024-05-06T12:00:00Z"
       updated_at: "2024-05-06T12:00:00Z"
+    ErrorResponse:  
+     type: object
+     properties:
+       success:
+        type: string
+        example: false
+       status:
+        type: integer
+        example: 404
+       message:
+        type: string
+        example: "Not found"  
+    ValidateResponse:  
+     type: object
+     properties:
+       success:
+        type: string
+        example: false
+       status:
+        type: integer
+        example: 404
+       message:
+        type: string
+        example: "Error Validate"  
+   
   securitySchemes:
     BearerAuth:
       type: http
