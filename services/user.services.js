@@ -2,7 +2,9 @@ const model = require("../database/models");
 module.exports = {
   index: async () => {
     try {
-      const response = await model.User.findAll();
+      const response = await model.User.findAll({
+        attributes: { exclude: ["password"] },
+      });
       if (response) {
         return {
           data: response,
