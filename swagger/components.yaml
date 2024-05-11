@@ -127,3 +127,33 @@ components:
       category:
          $ref: "#/components/schemas/Category"
     BaseProduct:  
+     type: object
+     properties:
+      name:
+        type: string
+        example: Ultraboost - White/Black
+      description:
+        type: string
+        example: Inspired by the original low-profile tennis shoe, the Nike Killshot 2 updates the upper with a variety of textured leathers to create a fresh look. From soft suedes to smooth leathers with the perfect sheen, it's court-side attitude with a modern touch.
+      seller:
+        type: string
+        example: Adidas
+      price:
+        type: number
+        format: float
+        example: 112.34
+      quantity:
+        type: integer
+        example: 1
+        default: 1
+      ratings:
+        type: number
+        minimum: 1
+        example: 4
+      stock:
+        type: number
+        example: 12
+        minimum: 1
+      img: 
+        type: string
+        example: https://bizweb.dktcdn.net/thumb/1024x1024/100/347/092/products/z-db3197-02.jpg
