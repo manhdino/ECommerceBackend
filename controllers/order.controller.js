@@ -4,7 +4,9 @@ const rs = require("../helpers/error");
 module.exports = {
   index: async (req, res) => {
     try {
+      console.log("Controller Index");
       const response = await orderService.index();
+
       if (response.error) {
         return rs.error(res, response.error);
       }

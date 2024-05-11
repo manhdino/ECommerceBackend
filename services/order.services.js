@@ -3,7 +3,8 @@ const model = require("../database/models");
 module.exports = {
   index: async () => {
     try {
-      const response = await model.Order.findAll({});
+      const response = await model.Order.findAll();
+      console.log(response);
       if (response) {
         return {
           data: response,

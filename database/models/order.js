@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Order.belongsTo(models.User, {
         targetKey: "id",
-        foreignKey: "ordered_by",
-        as: "orderedBy",
+        foreignKey: "user_id",
+        as: "ordered_by",
       });
 
       Order.hasMany(models.OrderDetails, {
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Order.init(
     {
-      ordered_by: {
+      user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
