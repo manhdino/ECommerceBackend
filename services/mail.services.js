@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer')
-const asyncHandler = require('express-async-handler')
 const sendMail = async (email, html) => {
     try{
         let transporter = nodemailer.createTransport({
@@ -26,7 +25,7 @@ const sendMail = async (email, html) => {
     }
 }
 
-const emailContent = (fullname, host) => {
+const emailContent = (fullname, host, resetLink) => {
     return `
         Hello ${fullname},
 

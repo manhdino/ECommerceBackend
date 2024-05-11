@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 const rs = require("../helpers/error");
 const db = require('../database/models');
 const {sendMail, emailContent} = require('./mail.services');
@@ -214,14 +215,54 @@ const forgotPassword = async (email) => {
         error: "This email is registered as a Google account."
       }
     }
-    const host = req.header('host')
-    const token = jwt.sign({userId : user.id, role: user.role}, process.env.JWT_SECRET_KEY, {expiresIn: '5m'});
+    const host = req.header('host');
+    const code = crypto.randomInt(100000, 1000000);
+    user.passwordCode = code;
+    await user.save();
+    const token = jwt.sign({userId : user.id, role: user.role, code: code}, process.env.JWT_SECRET_KEY, {expiresIn: '5m'});
     const resetLink = `${req.protocol}://${host}/reset?token=${token}&email=${email}`;
-    const html = emailContent(user.fullname, host);
-    sendMail(email, html)
+    const html = emailContent(user.fullname, host, resetLink);
+    const response = await sendMail(email, html);
+    if (response.error) {
+      return {
+        error: response.error
+      }
+    }
+    return {
+      data: response.info
+    }
   }
-  catch(error) {
+  catch(err) {
+    return {
+      error: err
+    }
+  }
+}
 
+const verifyLink = async (email, token) => {
+  try {
+    let decoded = verifyToken(token);
+    if (!decoded) {
+      return {
+        error: "Invalid token"
+      }
+    }
+    const user = await User.findOne({where: {
+      id: decoded.id
+    }})
+    if (user.passwordCode != decoded.code) {
+      return {
+        error: "invalid Link"
+      }
+    }
+    return {
+      success: "Valid Link"
+    }
+  }
+  catch(err) {
+    return {
+      error: err
+    }
   }
 }
 
@@ -231,5 +272,7 @@ module.exports = {
     refreshToken,
     signIn,
     signUp,
-    changePassword
+    changePassword,
+    forgotPassword,
+    verifyLink
 }
