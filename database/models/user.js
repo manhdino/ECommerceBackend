@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       fullname: {
         type: DataTypes.STRING(50),
+        allowNull: false,
       },
       email: {
         type: DataTypes.STRING(30),
@@ -36,6 +37,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       phone: {
         type: DataTypes.STRING(20),
+        allowNull: false,
       },
       password: {
         type: DataTypes.STRING,
@@ -43,7 +45,21 @@ module.exports = (sequelize, DataTypes) => {
       },
       address: {
         type: DataTypes.TEXT,
+        allowNull: false,
       },
+      refreshToken: {
+        type: DataTypes.STRING
+      },
+      googleId: {
+        type: DataTypes.STRING
+      },
+      is_blocked: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
+      },
+      passwordCode: DataTypes.STRING,
+      codeResetExpires: DataTypes.DATE,
       created_at: {
         allowNull: false,
         type: DataTypes.DATE,

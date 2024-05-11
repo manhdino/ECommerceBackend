@@ -15,6 +15,7 @@ module.exports = {
       },
       fullname: {
         type: Sequelize.STRING(100),
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING(30),
@@ -28,6 +29,7 @@ module.exports = {
       },
       phone: {
         type: Sequelize.STRING(20),
+        allowNull: false,
       },
       password: {
         type: Sequelize.STRING,
@@ -35,6 +37,16 @@ module.exports = {
       },
       address: {
         type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      googleId: {
+        type: Sequelize.STRING
+      },
+      refreshToken: {
+        type: Sequelize.STRING
+      },
+      passwordCode: {
+        type: Sequelize.STRING
       },
       created_at: {
         allowNull: false,
