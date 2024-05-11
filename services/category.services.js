@@ -18,8 +18,9 @@ module.exports = {
       };
     }
   },
-  create: async (name) => {
+  create: async (data) => {
     try {
+      const { name } = data;
       const checkCategory = await model.Category.findOne({
         where: {
           name: name,
@@ -50,8 +51,9 @@ module.exports = {
       };
     }
   },
-  show: async (categoryId) => {
+  show: async (data) => {
     try {
+      const { categoryId } = data;
       const response = await model.Category.findByPk(categoryId);
       if (!response) {
         return {
@@ -67,15 +69,26 @@ module.exports = {
       };
     }
   },
-  update: async (categoryId, name) => {
+  update: async (data) => {
     try {
+      const { categoryId, name } = data;
       const checkCategory = await model.Category.findByPk(categoryId);
       if (!checkCategory) {
         return {
           error: "Category not found",
         };
       }
-      const response = await db.Category.update(
+      const checkNameCategory = await model.Category.findOne({
+        where: {
+          name: name,
+        },
+      });
+      if (checkNameCategory) {
+        return {
+          error: "Category has already been used",
+        };
+      }
+      const response = await model.Category.update(
         {
           name: name,
           updated_at: new Date(),
@@ -98,15 +111,16 @@ module.exports = {
       };
     }
   },
-  destroy: async (categoryId) => {
+  destroy: async (data) => {
     try {
+      const { categoryId } = data;
       const checkCategory = await model.Category.findByPk(categoryId);
       if (!checkCategory) {
         return {
           error: "Category not found or has been deleted",
         };
       }
-      const response = await db.Category.destroy({
+      const response = await model.Category.destroy({
         where: {
           id: categoryId,
         },

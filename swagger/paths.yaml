@@ -1,12 +1,12 @@
 paths:
-  /auth/sign-in:
-     post:
+   /auth/sign-in:
+    post:
       tags:
         - auth
-      description: Sign In 
+      description: Allows users to sign in to the application with their credentials. 
       operationId: sign-in
       requestBody:
-        description: Sign In Information
+        description: User Information
         content:
           application/json:
             schema:
@@ -21,7 +21,7 @@ paths:
         required: true
       responses:
         '200':
-          description: Sign in successfully!
+          description: User signed in successfully
           content:
            application/json:
             schema:
@@ -57,16 +57,15 @@ paths:
           content:
            application/json:
             schema:
-              $ref: '#/components/schemas/ValidateResponse'
-             
-  /auth/sign-up:
+              $ref: '#/components/schemas/ValidateResponse'          
+   /auth/sign-up:
     post:
       tags:
         - auth
-      description: Sign Up 
+      description: Create a new user with the provided credentials.
       operationId: sign-up
       requestBody:
-        description: Sign Up Information
+        description:  User Information
         required: true
         content:
           application/json:
@@ -75,16 +74,19 @@ paths:
               properties:
                 email:
                   type: string
+                  format: email
                   example: "nhatminh123@gmail.com"
                 password:
                   type: string
+                  format: password
                   example: "12345678"
                 confirmPassword:
                   type: string
+                  format: password
                   example: "12345678"
       responses:
-        '200':
-          description: Sign up successfully!
+        '201':
+          description: User created successfully
           content:
            application/json:
             schema:
@@ -93,18 +95,18 @@ paths:
                 success:
                  type: string
                  example: true
-                status:
-                 type: integer
-                 example: 200
-                message:
-                 type: string
-                 example: "ok"
                 data:
                  type: object
                  properties:
                   user:
                     type: object
                     $ref: '#/components/schemas/User'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
         '404':
           description: Not Found
           content:
@@ -117,6 +119,287 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
-        
-
- 
+   /users:
+    get:
+      tags:
+        - user
+      description: Get all user
+      operationId: all-user
+      responses:
+        '200':
+          description: Get all user successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/User'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /categories:
+    get:
+      tags:
+        - category
+      description: Get all category
+      operationId:  all-cate
+      responses:
+        '200':
+          description: Get all category successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/Category'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /categories/{categoryId}:
+    get:
+      tags:
+        - category
+      description: Get detais category
+      operationId: detail-cate
+      parameters:
+        - in: path
+          name: categoryId  
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the category to get information
+      responses:
+        '200':
+          description: Get details category successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: object
+                 $ref: '#/components/schemas/Category'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'    
+   /categories/create:
+    post:
+      tags:
+        - category
+      description: Creates a new category with the provided name.
+      operationId: create-cate
+      requestBody:
+        description: The name of the new category.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Sneaker"
+      responses:
+        '200':
+          description: Category created successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: "Category created sucessfully"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'    
+   /categories/update/{categoryId}:
+    put:
+      tags:
+        - category
+      description: Updates the details of a category identified by categoryId.
+      operationId: update-cate
+      parameters:
+        - in: path
+          name: categoryId  
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the category to update
+      requestBody:
+        description: The name of the  category.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Sneaker"
+      responses:
+        '200':
+          description: Category updated successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Category updated successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /categories/delete/{categoryId}:
+    delete:
+      tags:
+        - category
+      description: Deletes a category identified by categoryId
+      operationId: delete-cate
+      parameters:
+        - in: path
+          name: categoryId  
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the category to delete
+      responses:
+        '200':
+          description: Category deleted successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Category deleted successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
