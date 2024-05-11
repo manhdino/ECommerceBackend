@@ -1,12 +1,22 @@
 const authService = require("../services/auth.services");
 const rs = require("../helpers/error");
-
+const { email, password, confirmPassword } = require("../helpers/validation");
+const Joi = require("joi");
 module.exports = {
   signIn: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { error } = Joi.object({
+        email,
+        password,
+      }).validate(req.body, {
+        errors: { wrap: { label: "" } },
+      });
+      if (error) {
+        return rs.validate(res, error.details[0].message);
+      }
 
-      const response = await authService.signIn(email, password);
+      const response = await authService.signIn(req.body);
+
       if (response.error) {
         return rs.error(res, response.error);
       }
@@ -30,8 +40,17 @@ module.exports = {
   },
   signUp: async (req, res) => {
     try {
-      const { email, password } = req.body;
-      const response = await authService.signUp(email, password);
+      const { error } = Joi.object({
+        email,
+        password,
+        confirmPassword,
+      }).validate(req.body, {
+        errors: { wrap: { label: "" } },
+      });
+      if (error) {
+        return rs.validate(res, error.details[0].message);
+      }
+      const response = await authService.signUp(req.body);
 
       if (response.error) {
         return rs.error(res, response.error);

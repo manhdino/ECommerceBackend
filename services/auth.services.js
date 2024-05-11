@@ -3,8 +3,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 module.exports = {
-  signIn: async (email, password) => {
+  signIn: async (data) => {
     try {
+      const { email, password } = data;
       const checkUser = await model.User.findOne({
         where: {
           email: email,
@@ -50,8 +51,9 @@ module.exports = {
       };
     }
   },
-  signUp: async (email, password) => {
+  signUp: async (data) => {
     try {
+      const { email, password } = data;
       const checkUser = await model.User.findOne({
         where: {
           email: email,
