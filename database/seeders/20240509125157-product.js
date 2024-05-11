@@ -4,7 +4,6 @@ const fs = require("fs");
 module.exports = {
   async up(queryInterface, Sequelize) {
     try {
-      // Đọc dữ liệu từ tệp JSON
       let [categories] = await queryInterface.sequelize.query(
         `SELECT id from Categories;`
       );

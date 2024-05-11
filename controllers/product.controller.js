@@ -1,6 +1,18 @@
 const productService = require("../services/product.services");
 const rs = require("../helpers/error");
-
+const {
+  name,
+  productId,
+  categoryId,
+  seller,
+  description,
+  price,
+  quantity,
+  stock,
+  ratings,
+  img,
+} = require("../validations/product.validation");
+const validator = require("../helpers/validator");
 module.exports = {
   index: async (req, res) => {
     try {
@@ -17,8 +29,28 @@ module.exports = {
   },
   show: async (req, res) => {
     try {
-      const productId = req.params.productId;
-      const response = await productService.show(productId);
+      const { error } = validator({ productId }, req.params);
+      if (error) {
+        return rs.validate(res, error.details[0].message);
+      }
+      const response = await productService.show(req.params);
+      if (response.error) {
+        return rs.error(res, response.error);
+      }
+      if (response) {
+        return rs.success(res, response);
+      }
+    } catch (error) {
+      return rs.error(res, error.message);
+    }
+  },
+  list: async (req, res) => {
+    try {
+      const { error } = validator({ categoryId }, req.params);
+      if (error) {
+        return rs.validate(res, error.details[0].message);
+      }
+      const response = await productService.list(req.params);
       if (response.error) {
         return rs.error(res, response.error);
       }
@@ -31,6 +63,23 @@ module.exports = {
   },
   create: async (req, res) => {
     try {
+      const { error } = validator(
+        {
+          name,
+          categoryId,
+          seller,
+          description,
+          price,
+          quantity,
+          ratings,
+          stock,
+          img,
+        },
+        req.body
+      );
+      if (error) {
+        return rs.validate(res, error.details[0].message);
+      }
       const response = await productService.create(req.body);
       if (response.error) {
         return rs.error(res, response.error);
@@ -44,8 +93,32 @@ module.exports = {
   },
   update: async (req, res) => {
     try {
-      const productId = req.params.productId;
-      const response = await productService.update(productId);
+      console.log(req.params.productId);
+      const { error } = validator(
+        {
+          name,
+          productId,
+          categoryId,
+          seller,
+          description,
+          price,
+          quantity,
+          ratings,
+          stock,
+          img,
+        },
+        {
+          ...req.body,
+          ...req.params,
+        }
+      );
+      if (error) {
+        return rs.validate(res, error.details[0].message);
+      }
+      const response = await productService.update({
+        ...req.body,
+        ...req.params,
+      });
       if (response.error) {
         return rs.error(res, response.error);
       }
@@ -58,13 +131,16 @@ module.exports = {
   },
   destroy: async (req, res) => {
     try {
-      const productId = req.params.productId;
-      const response = await productService.destroy(productId);
+      const { error } = validator({ productId }, req.params);
+      if (error) {
+        return rs.validate(res, error.details[0].message);
+      }
+      const response = await productService.destroy(req.params);
       if (response.error) {
         return rs.error(res, response.error);
       }
       if (response) {
-        return rs.ok(res, response);
+        return rs.success(res, response);
       }
     } catch (error) {
       return rs.error(res, error.message);

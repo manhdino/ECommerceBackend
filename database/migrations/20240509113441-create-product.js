@@ -23,6 +23,7 @@ module.exports = {
       name: {
         type: Sequelize.STRING(100),
         allowNull: false,
+        unique: true,
       },
       description: {
         type: Sequelize.TEXT,

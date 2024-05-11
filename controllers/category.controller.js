@@ -1,6 +1,7 @@
 const categoryService = require("../services/category.services");
 const rs = require("../helpers/error");
-const Joi = require("joi");
+const { name, categoryId } = require("../validations/category.validation");
+const validator = require("../helpers/validator");
 module.exports = {
   index: async (req, res) => {
     try {
@@ -17,11 +18,7 @@ module.exports = {
   },
   show: async (req, res) => {
     try {
-      const { error } = Joi.object({
-        categoryId: Joi.number().integer().required(),
-      }).validate(req.params, {
-        errors: { wrap: { label: "" } },
-      });
+      const { error } = validator({ categoryId }, req.params);
       if (error) {
         return rs.validate(res, error.details[0].message);
       }
@@ -38,11 +35,7 @@ module.exports = {
   },
   create: async (req, res) => {
     try {
-      const { error } = Joi.object({
-        name: Joi.string().max(30).required(),
-      }).validate(req.body, {
-        errors: { wrap: { label: "" } },
-      });
+      const { error } = validator({ name }, req.params);
 
       if (error) {
         return rs.validate(res, error.details[0].message);
@@ -60,14 +53,9 @@ module.exports = {
   },
   update: async (req, res) => {
     try {
-      const { error } = Joi.object({
-        name: Joi.string().max(30).required(),
-        categoryId: Joi.number().integer().required(),
-      }).validate(
-        { ...req.body, ...req.params },
-        {
-          errors: { wrap: { label: "" } },
-        }
+      const { error } = validator(
+        { categoryId, name },
+        { ...req.body, ...req.params }
       );
 
       if (error) {
@@ -89,11 +77,7 @@ module.exports = {
   },
   destroy: async (req, res) => {
     try {
-      const { error } = Joi.object({
-        categoryId: Joi.number().integer().required(),
-      }).validate(req.params, {
-        errors: { wrap: { label: "" } },
-      });
+      const { error } = validator({ categoryId }, req.params);
       if (error) {
         return rs.validate(res, error.details[0].message);
       }
