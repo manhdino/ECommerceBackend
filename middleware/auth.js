@@ -12,12 +12,13 @@ const auth = async (req, res, next) => {
     try {
         const infor = verifyToken(accessToken.split(" ")[1]);
         // const infor = jwt.verify(accessToken.split(" ")[0], process.env.JWT_SECRET_KEY)
-        // console.log(infor)
         if (!infor.error) {
             req.user = infor;
             return next();
         }
-        return rs.unauthorized(res, "Unauthorized");
+        else {
+            return rs.unauthorized(res, "Unauthorized");
+        }
     }
     catch(err) {
         return rs.unauthorized(res, "Unauthorized");
