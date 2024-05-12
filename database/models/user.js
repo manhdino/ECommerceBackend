@@ -53,13 +53,7 @@ module.exports = (sequelize, DataTypes) => {
       googleId: {
         type: DataTypes.STRING
       },
-      is_blocked: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-      },
       passwordCode: DataTypes.STRING,
-      codeResetExpires: DataTypes.DATE,
       created_at: {
         allowNull: false,
         type: DataTypes.DATE,
