@@ -3,8 +3,15 @@ const model = require("../database/models");
 module.exports = {
   index: async () => {
     try {
-      const response = await model.Order.findAll();
-      console.log(response);
+      const response = await model.Order.findAll({
+        attributes: { exclude: ["user_id"] },
+        include: [
+          {
+            model: model.User,
+            as: "ordered_by",
+          },
+        ],
+      });
       if (response) {
         return {
           data: response,
