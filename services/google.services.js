@@ -1,4 +1,5 @@
 const passport = require('passport')
+const jwt = require('jsonwebtoken')
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 // const {verifyToken, generateToken} = require('./auth.services')
 const db = require('../database/models');
@@ -45,10 +46,12 @@ const callbackStrategy = async (refreshToken, accessToken, profile, done) => {
         created_at: new Date(),
         updated_at: new Date(),
       })
+      console.log(_user.id)
       payload = {id: _user.id, role: _user.role};
       const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {expiresIn: "7d"});
       _user.refreshToken = refreshToken;
       await _user.save();
+      console.log('hello')
       const data =  {
         fullname: fullname,
         email: email,
