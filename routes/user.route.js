@@ -8,8 +8,8 @@ const { auth, admin } = require("../middleware/auth");
 // router.put("/update/:userId", [auth, admin], userController.update);
 // router.delete("/delete/:userId", [auth, admin], userController.destroy);
 
-router.get("/", userController.index);
-router.get("/:userId", userController.show);
-router.put("/update/:userId", userController.update);
-router.delete("/delete/:userId", userController.destroy);
+router.get("/", admin, userController.index);
+router.get("/:userId", auth, userController.show);
+router.put("/update/:userId", auth, userController.update);
+router.delete("/delete/:userId", admin, userController.destroy);
 module.exports = router;

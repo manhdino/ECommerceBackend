@@ -3,8 +3,9 @@ module.exports = {
   index: async () => {
     try {
       const response = await model.User.findAll({
-        attributes: { exclude: ["password"] },
-      });
+        attributes: { exclude: ["password"] }},
+        {where: {role: "user"}}
+      );
       if (response) {
         return {
           data: response,
@@ -21,7 +22,10 @@ module.exports = {
   },
   show: async (userId) => {
     try {
-      const response = await model.User.findByPk(userId);
+      const response = await model.User.findByPk(userId, {
+        attributes: {
+           exclude: ['password']
+        }});
       if (!response) {
         return {
           error: "User not found",
@@ -36,7 +40,7 @@ module.exports = {
       };
     }
   },
-  update: async (userId) => {
+  update: async (userId, data) => {
     try {
       const checkUser = await model.User.findByPk(userId);
       if (!checkUser) {
@@ -44,14 +48,18 @@ module.exports = {
           error: "User not found",
         };
       }
-      // const response = await model.Language.update();
-      const response = 1;
+      const response = await model.User.update(data, {where: {id: userId}});
       return {
-        data:
-          response == 1
-            ? "Language updated successfully"
-            : "Failed to update language",
-      };
+        data: response == 1 ? "User deleted successfully" : "User deleted failed"
+      }
+      // const response = await model.Language.update();
+      // const response = 1;
+      // return {
+      //   data:
+      //     response == 1
+      //       ? "Language updated successfully"
+      //       : "Failed to update language",
+      // };
     } catch (error) {
       return {
         error: error.message,
