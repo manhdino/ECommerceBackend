@@ -15,4 +15,10 @@ module.exports = {
       "any.only": "Password and confirm password do not match",
     })
     .required(),
+  phone: Joi.string()
+    .pattern(/^\d{10}$/)
+    .messages({
+      "string.pattern.base": "Phone number must be 10 digits",
+    })
+    .required(),
 };

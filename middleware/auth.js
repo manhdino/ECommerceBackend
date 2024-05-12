@@ -1,16 +1,23 @@
 //Check Permissions
 const {verifyToken} = require("../services/auth.services");
+const jwt = require('jsonwebtoken')
 const rs = require("../helpers/error");
 
 const auth = async (req, res, next) => {
+    // console.log('hello')
     const accessToken = req?.headers?.authorization;
     if (!accessToken) {
         return rs.error(res, "Access token is required");
     }
     try {
-        const infor = await verifyToken(accessToken.split(' ')[1]);
-        req.user = infor;
-        next;
+        const infor = verifyToken(accessToken.split(" ")[1]);
+        // const infor = jwt.verify(accessToken.split(" ")[0], process.env.JWT_SECRET_KEY)
+        // console.log(infor)
+        if (!infor.error) {
+            req.user = infor;
+            return next();
+        }
+        return rs.unauthorized(res, "Unauthorized");
     }
     catch(err) {
         return rs.unauthorized(res, "Unauthorized");

@@ -1,16 +1,12 @@
 const authService = require("../services/auth.services");
 const rs = require("../helpers/error");
-const { email, password, confirmPassword } = require("../helpers/validator");
+const { email, password, confirmPassword, phone } = require("../validations/auth.validation");
+const validator = require("../helpers/validator");
 const Joi = require("joi");
 
 const signIn = async (req, res) => {
     try {
-        const { error } = Joi.object({
-          email,
-          password,
-        }).validate(req.body, {
-          errors: { wrap: { label: "" } },
-        });
+        const { error } = validator({email, password}, req.body)
         if (error) {
           return rs.validate(res, error.details[0].message);
         }
@@ -44,13 +40,11 @@ const signIn = async (req, res) => {
 
 const signUp = async (req, res) => {
     try {
-        const { error } = Joi.object({
-          email,
-          password,
-          confirmPassword,
-        }).validate(req.body, {
-          errors: { wrap: { label: "" } },
-        });
+      const data = {email: req.body.email, password: req.body.password, confirmPassword: req.body.confirmPassword, phone: req.body.phone}
+      const { error } = validator(
+        { email, password, confirmPassword, phone },
+        data
+      );
         if (error) {
           return rs.validate(res, error.details[0].message);
         }
@@ -67,10 +61,11 @@ const signUp = async (req, res) => {
       }
 }
 
-const signOut = (req, res) => {
+const signOut = async (req, res) => {
     try {
-        res.clearCookie("access_token");
-        res.clearCookie("refresh_token");
+        // res.clearCookie("access_token");
+        // res.clearCookie("refresh_token");
+        await authService.signOut(req.user.userId);
         return rs.success(res, "Sign out successfully");
     } catch (error) {
         return rs.error(res, error.message);
@@ -92,6 +87,10 @@ const refreshToken = async (req, res) => {
     catch (err) {
         return rs.error(res, err.message);
     }
+}
+
+const changePassword = async (req, res) => {
+  
 }
 
 module.exports = {
