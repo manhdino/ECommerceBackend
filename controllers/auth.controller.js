@@ -4,6 +4,10 @@ const { email, password, confirmPassword, phone } = require("../validations/auth
 const validator = require("../helpers/validator");
 const Joi = require("joi");
 
+const _test = async (req, res) => {
+  
+}
+
 const signIn = async (req, res) => {
     try {
         const { error } = validator({email, password}, req.body)
@@ -90,7 +94,14 @@ const refreshToken = async (req, res) => {
 }
 
 const changePassword = async (req, res) => {
-  
+  const data = {password: req.newPassword, confirmPassword: req.confirmPassword}
+  const { error } = validator(
+    {  password, confirmPassword },
+    data
+  );
+  if (error) {
+    
+  }
 }
 
 module.exports = {

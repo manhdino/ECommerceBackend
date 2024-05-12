@@ -30,6 +30,9 @@ module.exports = (sequelize, DataTypes) => {
         unique: true,
         allowNull: false,
       },
+      avatar: {
+        type: DataTypes.TEXT
+      },
       role: {
         type: DataTypes.STRING(10),
         defaultValue: "user",

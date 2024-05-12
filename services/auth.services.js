@@ -5,6 +5,7 @@ const rs = require("../helpers/error");
 const db = require('../database/models');
 const {sendMail, emailContent} = require('./mail.services');
 const { where } = require('sequelize');
+const { error } = require('console');
 // const { phone } = require('../validations/auth.validation');
 const User = db.User;
 
@@ -198,7 +199,46 @@ const refreshToken = async (refreshToken) => {
     }
 }
 
-const changePassword = async (email, newPassword) => {
+const changePassword = async (userId, oldPassword, newPassword) => {
+  try {
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      }
+    })
+    if (!user) {
+      return {
+        error: "User not found!"
+      }
+    }
+    if (user.googleId) {
+      return {
+        error: "This email is registed as Google account."
+      }
+    }
+    const isPasswordValid = await bcrypt.compare(
+      oldPassword,
+      user.password
+    );
+    if (!isPasswordValid) {
+      return {
+        error: "password is invalid"
+      }
+    }
+    user.password = newPassword;
+    await user.save();
+    return {
+      message: "changed password successfully"
+    }
+  }
+  catch(err) {
+    return {
+      error: err
+    }
+  }
+}
+
+const resetPassword = async (email, newPassword) => {
   try {
     const user = await User.findOne({
       where: {
