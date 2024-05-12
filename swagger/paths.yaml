@@ -1,4 +1,3 @@
-   
 paths:
 
    /auth/sign-in:
@@ -738,6 +737,8 @@ paths:
         - order
       description: Get all order
       operationId:  all-order
+      security:
+        - BearerAuth: []
       responses:
         '200':
           description: Get all order successfully
@@ -902,6 +903,215 @@ paths:
                 data:
                  type: string
                  example: Product in shopping cart deleted successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /orders/{orderId}:
+    get:
+      tags:
+        - order
+      description: Get details of order
+      operationId:  details-order
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the order to get information
+      responses:
+        '200':
+          description: Get details order successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/DetailsOrder'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /orders/create:
+    post:
+      tags:
+        - order
+      description: Create a new order
+      operationId: create-order
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Order Information
+        required: true
+        content:
+          application/json:
+            schema:
+             type: object
+             $ref: "#/components/schemas/BaseOrder"
+            
+                 
+      responses:
+        '200':
+          description: Post created successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: "Post created successfully"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /orders/update/{orderId}:
+    put:
+      tags:
+        - order
+      description: Updates the status of the order
+      operationId: update-order
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: orderId  
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 4
+          description: The Id of the order to update
+        - in: query
+          name: status
+          required: true
+          schema:
+            type: string
+            minimum: 1
+            example: shipping
+          description: status of the order
+      responses:
+        '200':
+          description: Order updated successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Order updated successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /orders/delete/{orderId}:
+    delete:
+      tags:
+        - order
+      description: Deletes order identified by categoryId
+      operationId: delete-order
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the order to delete
+      responses:
+        '200':
+          description: Order deleted successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Order deleted successfully
                 status:
                  type: integer
                  example: 200
