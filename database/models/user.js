@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       User.hasMany(models.Order, {
         onDelete: "CASCADE",
-        foreignKey: "ordered_by",
+        foreignKey: "user_id",
         as: "orders",
       });
       User.hasMany(models.Cart, {
