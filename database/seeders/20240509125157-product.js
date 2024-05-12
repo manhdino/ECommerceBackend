@@ -21,7 +21,6 @@ module.exports = {
           stock: product.stock,
           ratings: product.ratings,
           img: product.img,
-          quantity: product.quantity,
           description: product.description,
           created_at: new Date(),
           updated_at: new Date(),

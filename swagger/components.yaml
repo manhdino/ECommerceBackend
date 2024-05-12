@@ -1,4 +1,3 @@
-
 components:
   schemas:
     User:  
@@ -157,3 +156,52 @@ components:
       img: 
         type: string
         example: https://bizweb.dktcdn.net/thumb/1024x1024/100/347/092/products/z-db3197-02.jpg
+    Order:  
+     type: object
+     properties:
+      id:
+        type: integer
+        format: int64
+        example: 4
+      payment_method:
+         type: string
+         example: "banking"
+      amount:
+         type: number
+         example: "1254.24"
+      status: 
+         type: string
+         example: "created"
+      name:
+        type: string
+        maxLength: 30
+        example: "Adidas"
+      created_at:
+        type: string
+        format: date-time
+        example: "2024-05-06T12:00:00Z"
+      updated_at:
+        type: string
+        format: date-time
+        example: 2024-05-06T12:00:00Z"
+      ordered_by:
+         type: object
+         $ref: "#/components/schemas/User"
+    Cart:  
+     type: object
+     properties:
+      id:
+        type: integer
+        format: int64
+        example: 4
+      user_id:
+         type: integer
+         example: 4
+      product: 
+        type: object
+        $ref: "#/components/schemas/BaseProduct"
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

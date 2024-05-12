@@ -1,4 +1,6 @@
+   
 paths:
+
    /auth/sign-in:
     post:
       tags:
@@ -730,4 +732,192 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
-  
+   /orders:
+    get:
+      tags:
+        - order
+      description: Get all order
+      operationId:  all-order
+      responses:
+        '200':
+          description: Get all order successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/Order'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /carts:
+    get:
+      tags:
+        - cart
+      description: Get all product in shopping cart
+      security:
+        - BearerAuth: []
+      operationId:  all-cart
+      responses:
+        '200':
+          description: Get all product in shopping cart successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/Cart'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /carts/add/{productId}:
+    post:
+      tags:
+        - cart
+      description: Add product to shopping cart.
+      operationId: add-product-cart
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: productId  
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of product add to shopping cart
+        - in: query
+          name: quantity
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Quantity of the product added
+      responses:
+        '200':
+          description: Add product to shopping cart successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Add product to shopping cart successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'    
+   /carts/delete/{productId}:
+    delete:
+      tags:
+        - cart
+      description: Delete a produt in shopping cart 
+      operationId: delete-product-cart
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: productId  
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of product add to shopping cart
+      responses:
+        '200':
+          description: Product in shopping cart deleted successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Product in shopping cart deleted successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'

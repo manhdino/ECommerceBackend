@@ -12,7 +12,6 @@ module.exports = {
         }
         if (user) {
           req.user = user;
-          console.log(user);
           next();
         } else {
           return rs.unauthorized(res, "Unauthorized");
