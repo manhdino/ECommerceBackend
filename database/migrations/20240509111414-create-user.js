@@ -22,6 +22,9 @@ module.exports = {
         unique: true,
         allowNull: false,
       },
+      avatar: {
+        type: Sequelize.TEXT,
+      },
       role: {
         type: Sequelize.STRING(10),
         defaultValue: "user",
