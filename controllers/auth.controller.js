@@ -97,5 +97,5 @@ module.exports = {
     signIn,
     signUp,
     signOut,
-    refreshToken
+    refreshToken,
 }

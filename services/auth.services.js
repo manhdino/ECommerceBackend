@@ -75,17 +75,17 @@ const signIn = async (data) => {
           };
         }
         let refreshToken = checkUser.refreshToken;
-        let checkVerify;
-        if (refreshToken != null) {
-          checkVerify = verifyToken(refreshToken);
-        }
-        if (refreshToken === null || checkVerify.error) {
-          refreshToken = await generateToken(checkUser.id, checkUser.role, "7d");
-            await User.update({
-                refreshToken: refreshToken.token
-            }, {where: {id: checkUser.id}})
-            console.log('tao refresh token thanh cong')
-        }
+        // let checkVerify;
+        // if (refreshToken != null) {
+        //   checkVerify = verifyToken(refreshToken);
+        // }
+        // if (refreshToken === null || checkVerify.error) {
+        refreshToken = await generateToken(checkUser.id, checkUser.role, "7d");
+          await User.update({
+              refreshToken: refreshToken.token
+          }, {where: {id: checkUser.id}})
+          console.log('tao refresh token thanh cong')
+        // }
         const access_token = jwt.sign(
           { userId: checkUser.id, role: checkUser.role },
           process.env.JWT_SECRET_KEY,
