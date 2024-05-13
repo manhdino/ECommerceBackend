@@ -50,8 +50,15 @@ module.exports = {
   },
   show: async (data) => {
     try {
-      const { orderId } = data;
+      console.log(data);
+      const { orderId, userId, role } = data;
+      console.log(orderId, userId, role);
       const checkOrder = await model.Order.findByPk(orderId);
+      if (checkOrder.user_id != userId) {
+        return {
+          error: "Unauthorized",
+        };
+      }
       if (!checkOrder) {
         return {
           error: "Order not found",

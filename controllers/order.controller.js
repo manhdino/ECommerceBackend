@@ -30,7 +30,10 @@ module.exports = {
       if (error) {
         return rs.validate(res, error.details[0].message);
       }
-      const response = await orderService.show(req.params);
+      const response = await orderService.show({
+        ...req.params,
+        ...req.user,
+      });
       if (response.error) {
         return rs.error(res, response.error);
       }
