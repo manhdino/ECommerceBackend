@@ -79,26 +79,33 @@ const refreshToken = async (req, res) => {
             return rs.error(res, "Unauthorized");
         }
         const response = await authService.refreshToken(refreshToken);
+        console.log(response)
         if (response.error) {
             return rs.error(res, response.error)
         }
-        return rs.success(res, response)
+        return res.status(200).cookie("access_token", response.accessToken).send({
+          success: true,
+          data: "generate access_token successfully",
+          status: 200,
+          message: "ok",
+        })
     }
     catch (err) {
+        console.log(err)
         return rs.error(res, err.message);
     }
 }
 
-const changePassword = async (req, res) => {
-  const data = {password: req.body.newPassword, confirmPassword: req.body.confirmPassword}
-  const { error } = validator(
-    {  password, confirmPassword },
-    data
-  );
-  if (error) {
-    return rs.validate(res, error.details[0].message);
-  }
-}
+// const changePassword = async (req, res) => {
+//   const data = {password: req.body.newPassword, confirmPassword: req.body.confirmPassword}
+//   const { error } = validator(
+//     {  password, confirmPassword },
+//     data
+//   );
+//   if (error) {
+//     return rs.validate(res, error.details[0].message);
+//   }
+// }
 
 const forgotPassword = async (req, res) => {
   const {error} = validator({email}, req.body);
@@ -108,9 +115,36 @@ const forgotPassword = async (req, res) => {
   const response = await authService.forgotPassword(req.body.email, req.header('host'), req.protocol);
   if (response.error) {
     console.log(response.error)
-    return rs.error(res, "error!");
+    return rs.error(res, response.error);
   }
-  return rs.success(res, "email sent successfully")
+  return rs.success(res, "email is sent successfully")
+}
+
+const resetPassword = async (req, res) => {
+  const {error} = validator({password, confirmPassword}, req.body.password);
+  if (error) {
+    return rs.validate(res, error.details[0].message);
+  }
+  const token = req.body.token;
+  const response = await authService.resetPassword(token, req.body.password);
+  if (response.error) {
+    return rs.error(res, response.error);
+  }
+  return rs.success(res, response.data);
+}
+
+const verifyLink = async (req, res) => {
+  const token = req.query.token;
+  const email = req.body.email;
+  const response = await authService.verifyLink(email, token);
+  console.log(response);
+  if (response.error) {
+    res.redirect('http://localhost:5173')      //chuyen den trang link loi ben fe
+  }
+  else {
+    res.cookie('passwordCode', token)
+    .redirect('http://localhost:5173')      //chuyen den trang reset password
+  }
 }
 
 module.exports = {
@@ -118,5 +152,7 @@ module.exports = {
     signUp,
     signOut,
     refreshToken,
-    forgotPassword
+    forgotPassword,
+    resetPassword,
+    verifyLink
 }
