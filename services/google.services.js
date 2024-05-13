@@ -38,7 +38,7 @@ const findOrCreateUser = async (userInfor) => {
       const googleId = userInfor.sub;
       const foundUser = await User.findOne({where: {googleId: googleId}});
       if (foundUser) {
-          payload = {id: foundUser.id, role: foundUser.role};
+          payload = {userId: foundUser.id, role: foundUser.role};
           const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {expiresIn: "7d"});
           const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
           await User.update(
@@ -69,7 +69,7 @@ const findOrCreateUser = async (userInfor) => {
           updated_at: new Date(),
         })
         console.log(_user.id)
-        payload = {id: _user.id, role: _user.role};
+        payload = {userId: _user.id, role: _user.role};
         const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {expiresIn: "7d"});
         const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
         _user.refreshToken = refreshToken;
