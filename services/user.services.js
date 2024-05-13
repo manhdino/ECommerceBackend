@@ -47,16 +47,19 @@ module.exports = {
           error: "User not found",
         };
       }
-      const checkEmail = await model.User.findOne({
-        where: {
-          email: email,
-        },
-      });
-      if (checkEmail) {
-        return {
-          error: "Email already in used",
-        };
+      if (checkUser.email != email) {
+        const checkEmail = await model.User.findOne({
+          where: {
+            email: email,
+          },
+        });
+        if (checkEmail) {
+          return {
+            error: "Email already in used",
+          };
+        }
       }
+
       const response = await model.User.update(
         {
           username: username,
