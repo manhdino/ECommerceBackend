@@ -4,7 +4,8 @@ const rs = require("../helpers/error");
 const redirectAuth = async (req, res) => {
     try {
         const url = await googleService.getGoogleAuthUrl();
-        res.redirect(url);
+        // res.redirect(url);
+        rs.success(res, url);
     }
     catch(err) {
         rs.error(res, "internal Server Error");
