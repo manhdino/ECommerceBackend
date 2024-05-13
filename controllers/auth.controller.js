@@ -4,7 +4,7 @@ const {
   email,
   password,
   confirmPassword,
-} = require("../validations/auth.validation");
+} = require("../validations/user.validation");
 const validator = require("../helpers/validator");
 
 module.exports = {

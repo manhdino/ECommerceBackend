@@ -1,3 +1,4 @@
+const { cloneDeep } = require("sequelize/lib/utils");
 const model = require("../database/models");
 module.exports = {
   index: async () => {
@@ -36,7 +37,7 @@ module.exports = {
       };
     }
   },
-  update: async (userId) => {
+  update: async (data, userId) => {
     try {
       const checkUser = await model.User.findByPk(userId);
       if (!checkUser) {
@@ -44,13 +45,25 @@ module.exports = {
           error: "User not found",
         };
       }
-      // const response = await model.Language.update();
-      const response = 1;
+
+      const response = await model.User.update(
+        {
+          username: data.username,
+          fullname: data.fullname,
+          email: data.email,
+          phone: data.phone,
+          address: data.address,
+        },
+        {
+          where: {
+            id: userId,
+          },
+        }
+      );
+
       return {
         data:
-          response == 1
-            ? "Language updated successfully"
-            : "Failed to update language",
+          response == 1 ? "User updated successfully" : "Failed to update user",
       };
     } catch (error) {
       return {

@@ -15,4 +15,8 @@ module.exports = {
       "any.only": "Password and confirm password do not match",
     })
     .required(),
+  username: Joi.string().max(50).required(),
+  fullname: Joi.string().max(100).required(),
+  phone: Joi.string().required(),
+  address: Joi.string().required(),
 };

@@ -1,6 +1,13 @@
 const userServices = require("../services/user.services");
 const rs = require("../helpers/error");
-
+const {
+  username,
+  fullname,
+  email,
+  phone,
+  address,
+} = require("../validations/user.validation");
+const validator = require("../helpers/validator");
 module.exports = {
   index: async (req, res) => {
     try {
@@ -17,12 +24,13 @@ module.exports = {
   },
   show: async (req, res) => {
     try {
-      const { userId, role } = req.user;
       const userIdParam = req.params.userId;
-      if (userIdParam != userId || role != "admin") {
+      const userId = req.user.userId;
+      const role = req.user.role;
+      if (!(role == "admin" || userId == userIdParam)) {
         return rs.unauthorized(res, "Unauthorized");
       }
-      const response = await userServices.show(userId);
+      const response = await userServices.show(userIdParam);
       if (response.error) {
         return rs.error(res, response.error);
       }
@@ -35,8 +43,21 @@ module.exports = {
   },
   update: async (req, res) => {
     try {
-      const userId = req.params.userId;
-      const response = await userServices.update(userId);
+      const userIdParam = req.params.userId;
+      const userId = req.user.userId;
+      const role = req.user.role;
+      if (!(role == "admin" || userId == userIdParam)) {
+        return rs.unauthorized(res, "Unauthorized");
+      }
+
+      const { error } = validator(
+        { username, fullname, email, address, phone },
+        req.body
+      );
+      if (error) {
+        return rs.validate(res, error.details[0].message);
+      }
+      const response = await userServices.update(req.body, userIdParam);
       if (response.error) {
         return rs.error(res, response.error);
       }
