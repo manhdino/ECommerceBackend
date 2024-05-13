@@ -4,11 +4,12 @@ module.exports = {
   index: async () => {
     try {
       const response = await model.Product.findAll({
-        attributes: { exclude: ["category_id"] },
+        attributes: { exclude: ["category_id", "created_at", "updated_at"] },
         include: [
           {
             model: model.Category,
             as: "category",
+            attributes: ["name"],
           },
         ],
       });

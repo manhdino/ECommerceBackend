@@ -4,7 +4,7 @@ paths:
     post:
       tags:
         - auth
-      description: Allows users to sign in to the application with their credentials. 
+      description: Sign In 
       operationId: sign-in
       requestBody:
         description: User Information
@@ -63,7 +63,7 @@ paths:
     post:
       tags:
         - auth
-      description: Create a new user with the provided credentials.
+      description: Sign Up
       operationId: sign-up
       requestBody:
         description:  User Information
@@ -73,6 +73,10 @@ paths:
             schema:
               type: object
               properties:
+                username:
+                  type: string
+                  format: email
+                  example: "nhatminh"
                 email:
                   type: string
                   format: email
@@ -120,12 +124,115 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
+   /auth/sign-out:
+     post:
+      tags:
+        - auth
+      description: Sign Out (Admin or User)
+      operationId: sign-out
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Signed out successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: object
+                 example: "Signed out successfully"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+             
+        '404':
+          description: Failed to sign out
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+   /users/update-password/{userId}:
+    post:
+      tags:
+        - user
+      description: Update password (Admin or Owner user)
+      operationId: update-password
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the user to update password
+      requestBody:
+        description: Password Information
+        content:
+          application/json:
+            schema:
+               type: object
+               properties:
+                oldPassword:
+                 type: string
+                 example: "12345678"
+                password:
+                 type: string
+                 example: "123456789"
+                confirmPassword:
+                 type: string
+                 example: "123456789"
+        required: true
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: "Password updated successfully"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+             
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'       
    /users:
     get:
       tags:
         - user
-      description: Get all user
+      description: Get all user (Admin only)
       operationId: all-user
+      security:
+        - BearerAuth: []
       responses:
         '200':
           description: Get all user successfully
@@ -161,11 +268,183 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
+   /users/{userId}:
+    get:
+      tags:
+        - user
+      description: Get details user(Admin or owner account)
+      operationId: details user
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the user to get information
+      responses:
+        '200':
+          description: Get details user successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/User'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /users/update/{userId}:
+    put:
+      tags:
+        - user
+      description: Update user(Admin or owner account)
+      operationId: update-user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the user to get information
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: User Information
+        content:
+          application/json:
+            schema:
+               type: object
+               properties:
+                username:
+                 type: string
+                 example: "dinomanh"
+                fullname:
+                 type: string
+                 example: "Nguyễn Viết Mạnh"
+                email:
+                 type: string
+                 example: "dinomanh123@gmail.com"
+                phone: 
+                 type: string
+                 example: "0876020132"
+                address: 
+                 type: string
+                 example: "134 Trương Định,Hai Bà Trưng, Hà Nội"
+        required: true
+      responses:
+        '200':
+          description: Updated user successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Updated user successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /users/delete/{userId}:
+    delete:
+      tags:
+        - user
+      description: Delete user (Admin only)
+      operationId: delete-order
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the user to delete
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Order deleted successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
    /categories:
     get:
       tags:
         - category
-      description: Get all category
+      description: Get all category 
       operationId:  all-cate
       responses:
         '200':
@@ -202,59 +481,14 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
-   /categories/{categoryId}:
-    get:
-      tags:
-        - category
-      description: Get detais category
-      operationId: detail-cate
-      parameters:
-        - in: path
-          name: categoryId  
-          required: true
-          schema:
-            type: integer
-            minimum: 1
-          description: The Id of the category to get information
-      responses:
-        '200':
-          description: Get details category successfully
-          content:
-           application/json:
-            schema:
-               type: object
-               properties:
-                success:
-                 type: string
-                 example: true
-                data:
-                 type: object
-                 $ref: '#/components/schemas/Category'
-                status:
-                 type: integer
-                 example: 200
-                message:
-                 type: string
-                 example: "ok"
-                
-        '404':
-          description: Not Found
-          content:
-           application/json:
-            schema:
-              $ref: '#/components/schemas/ErrorResponse'
-        '422':
-          description: Error Validate
-          content:
-           application/json:
-            schema:
-              $ref: '#/components/schemas/ValidateResponse'    
    /categories/create:
     post:
       tags:
         - category
-      description: Creates a new category with the provided name.
+      description: Creates a new category (Admin Only)
       operationId: create-cate
+      security:
+        - BearerAuth: []
       requestBody:
         description: The name of the new category.
         required: true
@@ -303,8 +537,10 @@ paths:
     put:
       tags:
         - category
-      description: Updates the details of a category identified by categoryId.
+      description: Update category (Admin only)
       operationId: update-cate
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: categoryId  
@@ -361,8 +597,10 @@ paths:
     delete:
       tags:
         - category
-      description: Deletes a category identified by categoryId
+      description: Delete category (Admin only)
       operationId: delete-cate
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: categoryId  
@@ -567,8 +805,10 @@ paths:
     post:
       tags:
         - product
-      description: Create a new product.
+      description: Create a new product (Admin only)
       operationId: create-product
+      security:
+        - BearerAuth: []
       requestBody:
         description: Product Information
         required: true
@@ -623,8 +863,10 @@ paths:
     put:
       tags:
         - product
-      description: Update product.
+      description: Update product (Admin only)
       operationId: update-product
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: productId  
@@ -687,8 +929,10 @@ paths:
     delete:
       tags:
         - product
-      description: Delete product.
+      description: Delete product  (Admin only)
       operationId: delete-product
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: productId  
@@ -735,7 +979,7 @@ paths:
     get:
       tags:
         - order
-      description: Get all order
+      description: Get all order (Admin or Owner user)
       operationId:  all-order
       security:
         - BearerAuth: []
@@ -778,7 +1022,7 @@ paths:
     get:
       tags:
         - cart
-      description: Get all product in shopping cart
+      description: Get all product in shopping cart (Admin or Owner user)
       security:
         - BearerAuth: []
       operationId:  all-cart
@@ -821,7 +1065,7 @@ paths:
     post:
       tags:
         - cart
-      description: Add product to shopping cart.
+      description: Add product to shopping cart (Admin or Owner user)
       operationId: add-product-cart
       security:
         - BearerAuth: []
@@ -877,7 +1121,7 @@ paths:
     delete:
       tags:
         - cart
-      description: Delete a produt in shopping cart 
+      description: Delete a produt in shopping cart (Admin or Owner user)
       operationId: delete-product-cart
       security:
         - BearerAuth: []
@@ -926,7 +1170,7 @@ paths:
     get:
       tags:
         - order
-      description: Get details of order
+      description: Get details of order (Admin or Owner user)
       operationId:  details-order
       security:
         - BearerAuth: []
@@ -977,7 +1221,7 @@ paths:
     post:
       tags:
         - order
-      description: Create a new order
+      description: Create a new order (Admin or User)
       operationId: create-order
       security:
         - BearerAuth: []
@@ -1028,7 +1272,7 @@ paths:
     put:
       tags:
         - order
-      description: Updates the status of the order
+      description: Updates the status of the order (Admin Only)
       operationId: update-order
       security:
         - BearerAuth: []
@@ -1086,7 +1330,7 @@ paths:
     delete:
       tags:
         - order
-      description: Deletes order identified by categoryId
+      description: Delete order (Admn or Owner user)
       operationId: delete-order
       security:
         - BearerAuth: []

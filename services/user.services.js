@@ -1,6 +1,6 @@
-const { cloneDeep } = require("sequelize/lib/utils");
 const model = require("../database/models");
 const error = require("../helpers/error");
+const bcrypt = require("bcryptjs");
 module.exports = {
   index: async () => {
     try {
@@ -79,6 +79,39 @@ module.exports = {
     } catch (error) {
       return {
         error: error.message,
+      };
+    }
+  },
+  updatePassword: async (data, userId) => {
+    try {
+      const checkUser = await model.User.findByPk(userId);
+      if (!checkUser) {
+        return {
+          error: "User not found",
+        };
+      }
+      const { oldPassword, password } = data;
+
+      const isPasswordValid = await bcrypt.compare(
+        oldPassword,
+        checkUser.password
+      );
+
+      if (!isPasswordValid) {
+        return {
+          error: "Invalid password",
+        };
+      }
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+      checkUser.password = hashedPassword;
+      checkUser.save();
+      return {
+        data: "Password updated successfully",
+      };
+    } catch (error) {
+      return {
+        data: error.message,
       };
     }
   },

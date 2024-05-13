@@ -8,6 +8,7 @@ module.exports = {
         "Email is not a valid pattern example214@gmail.com",
     })
     .required(),
+  oldPassword: Joi.string().min(8).required(),
   password: Joi.string().min(8).required(),
   confirmPassword: Joi.string()
     .valid(Joi.ref("password"))

@@ -6,6 +6,9 @@ const {
   email,
   phone,
   address,
+  oldPassword,
+  password,
+  confirmPassword,
 } = require("../validations/user.validation");
 const validator = require("../helpers/validator");
 
@@ -64,6 +67,45 @@ module.exports = {
       }
       if (response) {
         return rs.success(res, response);
+      }
+    } catch (error) {
+      return rs.error(res, error.message);
+    }
+  },
+  updatePassword: async (req, res) => {
+    try {
+      const userIdParam = req.params.userId;
+      const userId = req.user.userId;
+      const role = req.user.role;
+      if (!(role == "admin" || userId == userIdParam)) {
+        return rs.unauthorized(res, "Unauthorized");
+      }
+      const { error } = validator(
+        { oldPassword, password, confirmPassword },
+        req.body
+      );
+      if (error) {
+        return rs.validate(res, error.details[0].message);
+      }
+
+      const response = await userServices.updatePassword(req.body, userIdParam);
+
+      if (response.error) {
+        return rs.error(res, response.error);
+      }
+      const data = response.data;
+      if (response) {
+        res
+          .status(200)
+          .cookie("access_token", response.data.access_token, {
+            httpOnly: true,
+          })
+          .send({
+            success: true,
+            data,
+            status: 200,
+            message: "ok",
+          });
       }
     } catch (error) {
       return rs.error(res, error.message);

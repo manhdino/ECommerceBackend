@@ -1,11 +1,6 @@
 const authService = require("../services/auth.services");
 const rs = require("../helpers/error");
-const {
-  email,
-  password,
-  username,
-  confirmPassword,
-} = require("../validations/user.validation");
+const { email, password, username } = require("../validations/user.validation");
 const validator = require("../helpers/validator");
 
 module.exports = {
@@ -63,7 +58,9 @@ module.exports = {
   signOut: async (req, res) => {
     try {
       res.clearCookie("access_token");
-      return rs.success(res, "Sign out successfully");
+      return rs.success(res, {
+        data: "Sign out successfully",
+      });
     } catch (error) {
       return rs.error(res, error.message);
     }

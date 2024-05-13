@@ -144,14 +144,6 @@ components:
       img: 
         type: string
         example: https://bizweb.dktcdn.net/thumb/1024x1024/100/347/092/products/z-db3197-02.jpg
-      created_at:
-        type: string
-        format: date-time
-        example: "2024-05-06T12:00:00Z"
-      updated_at:
-        type: string
-        format: date-time
-        example: 2024-05-06T12:00:00Z"
       category:
          $ref: "#/components/schemas/Category"
     BaseProduct:  
@@ -259,7 +251,7 @@ components:
       product: 
         type: object
         $ref: "#/components/schemas/BaseProduct"
-    # DetailsOrder:
+    
 
 
   securitySchemes:
