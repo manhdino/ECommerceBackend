@@ -59,7 +59,7 @@ module.exports = {
   },
   signUp: async (data) => {
     try {
-      const { email, password } = data;
+      const { email, password, username } = data;
       const checkUser = await model.User.findOne({
         where: {
           email: email,
@@ -71,9 +71,9 @@ module.exports = {
         };
       }
       const newUser = await model.User.create({
+        username: username,
         email: email,
         password: password,
-        username: email,
         created_at: new Date(),
         updated_at: new Date(),
       });

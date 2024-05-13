@@ -1,5 +1,6 @@
 const { cloneDeep } = require("sequelize/lib/utils");
 const model = require("../database/models");
+const error = require("../helpers/error");
 module.exports = {
   index: async () => {
     try {
@@ -39,20 +40,30 @@ module.exports = {
   },
   update: async (data, userId) => {
     try {
+      const { username, fullname, email, address, phone } = data;
       const checkUser = await model.User.findByPk(userId);
       if (!checkUser) {
         return {
           error: "User not found",
         };
       }
-
+      const checkEmail = await model.User.findOne({
+        where: {
+          email: email,
+        },
+      });
+      if (checkEmail) {
+        return {
+          error: "Email already in used",
+        };
+      }
       const response = await model.User.update(
         {
-          username: data.username,
-          fullname: data.fullname,
-          email: data.email,
-          phone: data.phone,
-          address: data.address,
+          username: username,
+          fullname: fullname,
+          email: email,
+          phone: phone,
+          address: address,
         },
         {
           where: {
@@ -73,6 +84,7 @@ module.exports = {
   },
   destroy: async (userId) => {
     try {
+      console.log(userId);
       const checkUser = await model.User.findByPk(userId);
       if (!checkUser) {
         return {

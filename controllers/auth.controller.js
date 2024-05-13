@@ -3,6 +3,7 @@ const rs = require("../helpers/error");
 const {
   email,
   password,
+  username,
   confirmPassword,
 } = require("../validations/user.validation");
 const validator = require("../helpers/validator");
@@ -41,7 +42,7 @@ module.exports = {
   signUp: async (req, res) => {
     try {
       const { error } = validator(
-        { email, password, confirmPassword },
+        { username, email, password, confirmPassword },
         req.body
       );
       if (error) {

@@ -8,6 +8,7 @@ const {
   address,
 } = require("../validations/user.validation");
 const validator = require("../helpers/validator");
+
 module.exports = {
   index: async (req, res) => {
     try {
@@ -70,8 +71,16 @@ module.exports = {
   },
   destroy: async (req, res) => {
     try {
-      const userId = req.params.userId;
-      const response = await userServices.destroy(userId);
+      const userIdParam = req.params.userId;
+      const userId = req.user.userId;
+      if (userId == userIdParam) {
+        return rs.error(
+          res,
+          "It's not allowed to delete the user who is currently logged in."
+        );
+      }
+
+      const response = await userServices.destroy(userIdParam);
       if (response.error) {
         return rs.error(res, response.error);
       }
