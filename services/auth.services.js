@@ -178,17 +178,23 @@ const signOut = async (userId) => {
 const refreshToken = async (refreshToken) => {
     try {
         const checkVerify = await verifyToken(refreshToken)
+        console.log(checkVerify)
         if (checkVerify.userId) {
             const response = await User.findOne({id: checkVerify.id, refreshToken: refreshToken})
-            return ({
-                success: response ? true: false,
-                accessToken: response ? jwt.sign(checkVerify, process.env.JWT_SECRET, { expiresIn: '1d' }) : null
-            })
+            if (response) {
+              return ({
+                accessToken: jwt.sign({userId: checkVerify.id, role: checkVerify.role}, process.env.JWT_SECRET_KEY, { expiresIn: '1d' })
+              })
+            }
+            else {
+              return {
+                error: "loi"
+              }
+            }
         }
         if (checkVerify.error) {
           return ({
-            success: false,
-            message: "refresh token is expired"
+            error: "refresh token is expired"
           })
         }
     } catch (err) {
@@ -198,50 +204,56 @@ const refreshToken = async (refreshToken) => {
     }
 }
 
-const changePassword = async (userId, oldPassword, newPassword) => {
-  try {
-    const user = await User.findOne({
-      where: {
-        id: userId,
-      }
-    })
-    if (!user) {
-      return {
-        error: "User not found!"
-      }
-    }
-    if (user.googleId) {
-      return {
-        error: "This email is registed as Google account."
-      }
-    }
-    const isPasswordValid = await bcrypt.compare(
-      oldPassword,
-      user.password
-    );
-    if (!isPasswordValid) {
-      return {
-        error: "password is invalid"
-      }
-    }
-    user.password = newPassword;
-    await user.save();
-    return {
-      message: "changed password successfully"
-    }
-  }
-  catch(err) {
-    return {
-      error: err
-    }
-  }
-}
+// const changePassword = async (userId, oldPassword, newPassword) => {
+//   try {
+//     const user = await User.findOne({
+//       where: {
+//         id: userId,
+//       }
+//     })
+//     if (!user) {
+//       return {
+//         error: "User not found!"
+//       }
+//     }
+//     if (user.googleId) {
+//       return {
+//         error: "This email is registed as Google account."
+//       }
+//     }
+//     const isPasswordValid = await bcrypt.compare(
+//       oldPassword,
+//       user.password
+//     );
+//     if (!isPasswordValid) {
+//       return {
+//         error: "password is invalid"
+//       }
+//     }
+//     user.password = newPassword;
+//     await user.save();
+//     return {
+//       message: "changed password successfully"
+//     }
+//   }
+//   catch(err) {
+//     return {
+//       error: err
+//     }
+//   }
+// }
 
-const resetPassword = async (email, newPassword) => {
+const resetPassword = async (token, newPassword) => {
+  const payload = await verifyToken(token);
+  if (payload.error) {
+    return {
+      error: "reset password code is expired"
+    }
+  }
   try {
     const user = await User.findOne({
       where: {
-        email: email
+        id: payload.userId
       }
     })
     if (!user) {
@@ -249,16 +261,21 @@ const resetPassword = async (email, newPassword) => {
         error: "Email not found"
       };
     }
-    if (user.googleId) {
+    // if (user.googleId) {
+    //   return {
+    //     error: "This email is registered as a Google account."
+    //   }
+    // }
+    if (payload.code != user.passwordCode) {
       return {
-        error: "This email is registered as a Google account."
+        error: "Unauthorized!"
       }
     }
     user.password = newPassword;
     user.passwordCode = null;
     await user.save();
     return {
-      message: "password updated"
+      data: "password updated"
     }
   }
   catch (err) {
@@ -287,7 +304,7 @@ const forgotPassword = async (email, host, protocol) => {
     user.passwordCode = code;
     await user.save();
     const token = jwt.sign({userId : user.id, role: user.role, code: code}, process.env.JWT_SECRET_KEY, {expiresIn: '1d'});
-    const resetLink = `${protocol}://${host}/reset?token=${token}&email=${email}`;
+    const resetLink = `${protocol}://${host}/verify-link?token=${token}&email=${email}`;
     const html = emailContent(user.fullname, host, resetLink);
     const response = await sendMail(email, html);
     if (response.error) {
@@ -311,11 +328,11 @@ const verifyLink = async (email, token) => {
     let decoded = verifyToken(token);
     if (decoded.error) {
       return {
-        error: "Invalid token"
+        error: "Invalid Link"
       }
     }
     const user = await User.findOne({where: {
-      id: decoded.id
+      id: decoded.userId
     }})
     if (user.passwordCode != decoded.code) {
       return {
@@ -323,7 +340,7 @@ const verifyLink = async (email, token) => {
       }
     }
     return {
-      success: "Valid Link"
+      data: "Valid Link"
     }
   }
   catch(err) {
@@ -340,7 +357,8 @@ module.exports = {
     signIn,
     signUp,
     signOut,
-    changePassword,
+    // changePassword,
     forgotPassword,
-    verifyLink
+    verifyLink,
+    resetPassword
 }
