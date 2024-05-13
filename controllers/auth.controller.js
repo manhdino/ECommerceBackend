@@ -104,9 +104,23 @@ const changePassword = async (req, res) => {
   }
 }
 
+const forgotPassword = async (req, res) => {
+  const {error} = validator({email}, req.body);
+  if (error) {
+    return rs.validate(res, error.details[0].message);
+  }
+  const response = await authService.forgotPassword(req.body.email, req.header('host'), req.protocol);
+  if (response.error) {
+    console.log(response.error)
+    return rs.error(res, "error!");
+  }
+  return rs.success(res, "email sent successfully")
+}
+
 module.exports = {
     signIn,
     signUp,
     signOut,
     refreshToken,
+    forgotPassword
 }

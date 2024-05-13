@@ -4,8 +4,7 @@ const crypto = require('crypto');
 const rs = require("../helpers/error");
 const db = require('../database/models');
 const {sendMail, emailContent} = require('./mail.services');
-const { where } = require('sequelize');
-const { error } = require('console');
+
 // const { phone } = require('../validations/auth.validation');
 const User = db.User;
 
@@ -269,10 +268,10 @@ const resetPassword = async (email, newPassword) => {
   }
 }
 
-const forgotPassword = async (email) => {
+const forgotPassword = async (email, host, protocol) => {
   try {
     const user = await User.findOne({
-      where: email
+      where: {email: email}
     })
     if (!user) {
       return {
@@ -284,12 +283,11 @@ const forgotPassword = async (email) => {
         error: "This email is registered as a Google account."
       }
     }
-    const host = req.header('host');
     const code = crypto.randomInt(100000, 1000000);
     user.passwordCode = code;
     await user.save();
     const token = jwt.sign({userId : user.id, role: user.role, code: code}, process.env.JWT_SECRET_KEY, {expiresIn: '1d'});
-    const resetLink = `${req.protocol}://${host}/reset?token=${token}&email=${email}`;
+    const resetLink = `${protocol}://${host}/reset?token=${token}&email=${email}`;
     const html = emailContent(user.fullname, host, resetLink);
     const response = await sendMail(email, html);
     if (response.error) {

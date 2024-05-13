@@ -74,7 +74,7 @@ const findOrCreateUser = async (userInfor) => {
         const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
         _user.refreshToken = refreshToken;
         await _user.save();
-        console.log('hello')
+        // console.log('hello')
         const data =  {
           fullname: fullname,
           email: email,
@@ -88,9 +88,11 @@ const findOrCreateUser = async (userInfor) => {
           updated_at: new Date(),    
         }
         return {
-          data: data,
-          refreshToken: refreshToken,
-          accesToken: accessToken
+          data: {
+            user: data,
+            refreshToken: refreshToken,
+            access_token: accessToken
+          }
         }
       }
   }

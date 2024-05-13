@@ -18,9 +18,23 @@ const googleCallback = async(req, res) => {
         console.log(userInfor);
         const response = await googleService.findOrCreateUser(userInfor);
         if (!response.error) {
-            return rs.success(res, "Dang nhap thanh cong");
+            res.status(200)
+            .cookie("refresh_token", response.data.refreshToken, {
+                httpOnly: true
+            })
+            .cookie("access_token", response.data.access_token, {
+                httpOnly: true,
+            })
+            .send({
+                success: true,
+                data: response.data,
+                status: 200,
+                message: "ok",
+            });
         }
-        return rs.error(res, "Dang nhap khong thanh cong");
+        else {
+            rs.error(res, response.error);
+        }
     }
     catch(err) {
         console.log(err);
