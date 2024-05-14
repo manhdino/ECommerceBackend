@@ -10,8 +10,8 @@ const auth = async (req, res, next) => {
         return rs.error(res, "Access token is required");
     }
     try {
-        const infor = verifyToken(accessToken.split(" ")[0]);
-        // const infor = jwt.verify(accessToken.split(" ")[0], process.env.JWT_SECRET_KEY)
+        const infor = verifyToken(accessToken.split(" ")[1]);
+        // const infor = jwt.verify(accessToken.split(" ")[1], process.env.JWT_SECRET_KEY)
         if (!infor.error) {
             req.user = infor;
             return next();
