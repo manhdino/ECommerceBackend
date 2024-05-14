@@ -84,7 +84,7 @@ module.exports = {
       return rs.error(res, response.error);
     }
     return rs.success(res, {
-      data: "An email has been sent successfully. Please check your inbox to reset your password",
+      data: "Email has been sent successfully. Please check your inbox to reset your password",
     });
   },
   resetPassword: async (req, res) => {
@@ -92,27 +92,33 @@ module.exports = {
       { password, confirmPassword },
       { password: req.body.password, confirmPassword: req.body.confirmPassword }
     );
+
     if (error) {
-      res.clearCookie("passwordCode");
       return rs.validate(res, error.details[0].message);
     }
-    const token = req.body.passwordCode;
-    const response = await authService.resetPassword(token, req.body.password);
+    const token = req.body.resetPasswordToken;
+    if (!token) {
+      rs.error(res, "Unauthorized");
+    }
+    const response = await authService.resetPassword(token, req.body);
     if (response.error) {
-      res.clearCookie("passwordCode");
       return rs.error(res, response.error);
     }
-    res.clearCookie("passwordCode");
-    return rs.success(res, response.data);
+    if (response.error) {
+      return rs.error(res, response.error);
+    }
+    res.clearCookie("resetPasswordToken");
+    return rs.success(res, response);
   },
   verifyLink: async (req, res) => {
     const token = req.query.token;
-    const email = req.query.email;
-    const response = await authService.verifyLink(email, token);
+    const response = await authService.verifyLink(token);
     if (response.error) {
-      res.redirect("http://localhost:5173/loi"); //chuyen den trang link loi ben fe
+      res.redirect("http://localhost:5173/loi");
     } else {
-      res.cookie("passwordCode", token).redirect("http://localhost:5173/oke"); //chuyen den trang reset password
+      res
+        .cookie("resetPasswordToken", token)
+        .redirect("http://localhost:5173/sign-up");
     }
   },
 };

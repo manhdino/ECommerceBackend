@@ -2,6 +2,7 @@ const model = require("../database/models");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { emailContent, sendMail } = require("./mail.services");
+const rs = require("../helpers/error");
 module.exports = {
   signIn: async (data) => {
     try {
@@ -97,38 +98,38 @@ module.exports = {
     }
   },
 
-  resetPassword: async (token, newPassword) => {
-    const payload = await verifyToken(token);
-    if (payload.error) {
-      return {
-        error: "reset password code is expired",
-      };
-    }
+  resetPassword: async (token, data) => {
     try {
-      const user = await User.findOne({
+      const { password } = data;
+      let userInfo = null;
+      console.log(token);
+      jwt.verify(token, process.env.JWT_SECRET_KEY, (error, res) => {
+        if (error) {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+        if (res) {
+          userInfo = res;
+        } else {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+      });
+      const checkUser = await model.User.findOne({
         where: {
-          id: payload.userId,
+          id: userInfo.userId,
         },
       });
-      if (!user) {
-        return {
-          error: "Email not found",
-        };
+      console.log(userInfo, password);
+      if (userInfo.passwordCode != checkUser.password_code) {
       }
-      if (payload.code != user.passwordCode) {
-        return {
-          error: "Unauthorized!",
-        };
-      }
-      user.password = newPassword;
-      user.passwordCode = null;
-      await user.save();
+      const hashedPassword = await bcrypt.hash(password, 10);
+      checkUser.password = hashedPassword;
+      await checkUser.save();
       return {
-        data: "password updated",
+        data: "Password reset successfully",
       };
     } catch (err) {
       return {
-        error: "invalid",
+        error: err,
       };
     }
   },
@@ -149,10 +150,9 @@ module.exports = {
       const token = jwt.sign(
         { userId: checkUser.id, passwordCode: passwordCode },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "5m" }
+        { expiresIn: "5h" }
       );
-      const resetLink = `${protocol}://${host}/api/auth/verify-link?token=${token}&email=${email}`;
-      console.log(resetLink);
+      const resetLink = `${protocol}://${host}/api/auth/verify-link?token=${token}`;
       const html = emailContent(checkUser.username, resetLink);
       const response = await sendMail(email, html);
       if (response.error) {
@@ -170,24 +170,30 @@ module.exports = {
     }
   },
 
-  verifyLink: async (email, token) => {
+  verifyLink: async (token) => {
     try {
-      let decoded = verifyToken(token);
-      if (decoded.error) {
-        return {
-          error: "Invalid Link",
-        };
-      }
-      const user = await User.findOne({
+      jwt.verify(token, process.env.JWT_SECRET_KEY, (error, res) => {
+        if (error) {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+        if (res) {
+          userInfo = res;
+        } else {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+      });
+
+      const checkUser = await model.User.findOne({
         where: {
-          id: decoded.userId,
+          id: userInfo.userId,
         },
       });
-      if (user.passwordCode != decoded.code) {
+      if (checkUser.password_code != userInfo.passwordCode) {
         return {
-          error: "invalid Link",
+          error: "Unauthorized!",
         };
       }
+
       return {
         data: "Valid Link",
       };
