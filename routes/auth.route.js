@@ -19,4 +19,6 @@ router.get('/verify-link', authController.verifyLink);
 router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);
 
+router.get('/me', auth, authController.getMe);
+
 module.exports = router;

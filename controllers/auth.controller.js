@@ -1,4 +1,5 @@
 const authService = require("../services/auth.services");
+const userService = require("../services/user.services")
 const rs = require("../helpers/error");
 const { email, password, confirmPassword, phone } = require("../validations/auth.validation");
 const validator = require("../helpers/validator");
@@ -151,6 +152,20 @@ const verifyLink = async (req, res) => {
   }
 }
 
+const getMe = async (req, res) => {
+  try {
+    const id = req.user.userId;
+    const response = await userService.show(id);
+    if (response.error) {
+      rs.error(res, {message: "User not found"});
+    }
+    return rs.success(res, response)
+  }
+  catch(err) {
+    return rs.error(res, {message: "loi"})
+  }
+}
+
 module.exports = {
     signIn,
     signUp,
@@ -158,5 +173,6 @@ module.exports = {
     refreshToken,
     forgotPassword,
     resetPassword,
-    verifyLink
+    verifyLink,
+    getMe
 }
