@@ -112,13 +112,14 @@ module.exports = {
   },
   verifyLink: async (req, res) => {
     const token = req.query.token;
+    console.log(token);
     const response = await authService.verifyLink(token);
     if (response.error) {
-      res.redirect("http://localhost:5173/loi");
+      res.redirect("http://localhost:5173/error");
     } else {
       res
         .cookie("resetPasswordToken", token)
-        .redirect("http://localhost:5173/sign-up");
+        .redirect("http://localhost:5173/reset-password");
     }
   },
 };
