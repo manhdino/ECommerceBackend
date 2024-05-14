@@ -120,7 +120,6 @@ module.exports = {
   },
   destroy: async (userId) => {
     try {
-      console.log(userId);
       const checkUser = await model.User.findByPk(userId);
       if (!checkUser) {
         return {

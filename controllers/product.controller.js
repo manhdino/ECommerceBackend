@@ -93,7 +93,6 @@ module.exports = {
   },
   update: async (req, res) => {
     try {
-      console.log(req.params.productId);
       const { error } = validator(
         {
           name,

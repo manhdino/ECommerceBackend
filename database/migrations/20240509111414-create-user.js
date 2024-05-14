@@ -33,6 +33,9 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      password_code: {
+        type: Sequelize.STRING,
+      },
       address: {
         type: Sequelize.TEXT,
       },

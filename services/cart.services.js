@@ -64,7 +64,6 @@ module.exports = {
   create: async (data) => {
     try {
       const { productId, quantity, ...userInfo } = data;
-      console.log(userInfo, productId, quantity);
       const checkProduct = await model.Product.findByPk(productId);
       if (!checkProduct) {
         return {
@@ -109,7 +108,6 @@ module.exports = {
   destroy: async (data) => {
     try {
       const { productId, ...userInfo } = data;
-      console.log(productId, userInfo);
       const checkProduct = await model.Product.findByPk(productId);
       if (!checkProduct) {
         return {

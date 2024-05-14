@@ -27,7 +27,6 @@ module.exports = {
         });
       });
       await queryInterface.bulkInsert("Products", productsWithCategoryIds);
-      console.log("Data inserted successfully.");
     } catch (error) {
       console.error("Error inserting data:", error);
     }

@@ -198,12 +198,22 @@ module.exports = {
           error: "Order not found or has been deleted",
         };
       }
-      const response = await model.Order.destroy({
-        where: {
-          id: orderId,
-          user_id: userInfo.userId,
-        },
-      });
+      let response = null;
+      if (userInfo.role == "admin") {
+        response = await model.Order.destroy({
+          where: {
+            id: orderId,
+          },
+        });
+      } else {
+        response = await model.Order.destroy({
+          where: {
+            id: orderId,
+            user_id: userInfo.userId,
+          },
+        });
+      }
+
       return {
         data:
           response == 1
