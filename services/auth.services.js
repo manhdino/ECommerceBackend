@@ -183,7 +183,7 @@ const refreshToken = async (refreshToken) => {
             const response = await User.findOne({id: checkVerify.id, refreshToken: refreshToken})
             if (response) {
               return ({
-                accessToken: jwt.sign({userId: checkVerify.id, role: checkVerify.role}, process.env.JWT_SECRET_KEY, { expiresIn: '1d' })
+                accessToken: jwt.sign({userId: checkVerify.userId, role: checkVerify.role}, process.env.JWT_SECRET_KEY, { expiresIn: '5m' })
               })
             }
             else {
@@ -352,6 +352,29 @@ const verifyLink = async (email, token) => {
   }
 }
 
+// const getUserById = async (id) => {
+//   try {
+//     const user = await User.findByPk(id, {
+//       attributes: {
+//         exclude: ['password']
+//       }
+//     });
+//     if (!user) {
+//       return {
+//         error: "User not found"
+//       }
+//     }
+//     return {
+//       data: user
+//     }
+//   }
+//   catch (err) {
+//     return {
+//       error: err
+//     }
+//   }
+// }
+
 module.exports = {
     generateToken,
     verifyToken,
@@ -362,5 +385,5 @@ module.exports = {
     // changePassword,
     forgotPassword,
     verifyLink,
-    resetPassword
+    resetPassword,
 }
