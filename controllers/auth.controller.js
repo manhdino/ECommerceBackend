@@ -140,11 +140,11 @@ const verifyLink = async (req, res) => {
   const response = await authService.verifyLink(email, token);
   console.log(response);
   if (response.error) {
-    res.redirect('http://localhost:5173')      //chuyen den trang link loi ben fe
+    res.redirect('http://localhost:5173/loi')      //chuyen den trang link loi ben fe
   }
   else {
     res.cookie('passwordCode', token)
-    .redirect('http://localhost:5173')      //chuyen den trang reset password
+    .redirect('http://localhost:5173/oke')      //chuyen den trang reset password
   }
 }
 
