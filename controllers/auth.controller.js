@@ -63,8 +63,8 @@ const signUp = async (req, res) => {
 
 const signOut = async (req, res) => {
     try {
-        // res.clearCookie("access_token");
-        // res.clearCookie("refresh_token");
+        res.clearCookie("access_token");
+        res.clearCookie("refreshToken");
         await authService.signOut(req.user.userId);
         return rs.success(res, "Sign out successfully");
     } catch (error) {
@@ -124,14 +124,17 @@ const resetPassword = async (req, res) => {
   console.log('hello')
   const {error} = validator({password, confirmPassword}, {password: req.body.password, confirmPassword: req.body.confirmPassword});
   if (error) {
+    res.clearCookie("passwordCode")
     return rs.validate(res, error.details[0].message);
   }
   const token = req.body.passwordCode;
   const response = await authService.resetPassword(token, req.body.password);
   if (response.error) {
+    res.clearCookie("passwordCode")
     return rs.error(res, response.error);
   }
-  return rs.success(res, response.data);
+    res.clearCookie("passwordCode")
+    return rs.success(res, response.data);
 }
 
 const verifyLink = async (req, res) => {

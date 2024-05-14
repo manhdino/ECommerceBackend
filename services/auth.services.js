@@ -281,7 +281,7 @@ const resetPassword = async (token, newPassword) => {
   }
   catch (err) {
     return {
-      error: err
+      error: "invalid"
     }
   }
 }
@@ -301,7 +301,8 @@ const forgotPassword = async (email, host, protocol) => {
         error: "This email is registered as a Google account."
       }
     }
-    const code = crypto.randomInt(100000, 1000000);
+    // const code = crypto.randomInt(100000, 1000000);
+    const code = 111111;
     user.passwordCode = code;
     await user.save();
     const token = jwt.sign({userId : user.id, role: user.role, code: code}, process.env.JWT_SECRET_KEY, {expiresIn: '1d'});
