@@ -121,11 +121,12 @@ const forgotPassword = async (req, res) => {
 }
 
 const resetPassword = async (req, res) => {
-  const {error} = validator({password, confirmPassword}, req.body.password);
+  console.log('hello')
+  const {error} = validator({password, confirmPassword}, {password: req.body.password, confirmPassword: req.body.confirmPassword});
   if (error) {
     return rs.validate(res, error.details[0].message);
   }
-  const token = req.body.token;
+  const token = req.body.passwordCode;
   const response = await authService.resetPassword(token, req.body.password);
   if (response.error) {
     return rs.error(res, response.error);
@@ -135,7 +136,7 @@ const resetPassword = async (req, res) => {
 
 const verifyLink = async (req, res) => {
   const token = req.query.token;
-  const email = req.body.email;
+  const email = req.query.email;
   const response = await authService.verifyLink(email, token);
   console.log(response);
   if (response.error) {

@@ -10,13 +10,13 @@ router.post("/sign-out", auth, authController.signOut);
 
 router.post("/refresh-token", authController.refreshToken );
 
-router.post("/forgot-password", authController.forgotPassword);
+// router.post("/forgot-password", authController.forgotPassword);
 
 router.get('/google', googleController.redirectAuth);
 router.get('/google/callback', googleController.googleCallback);
 
 router.get('/verify-link', authController.verifyLink);
-router.get('/forgot-password', authController.forgotPassword);
-router.get('/reset-password', authController.resetPassword);
+router.post('/forgot-password', authController.forgotPassword);
+router.post('/reset-password', authController.resetPassword);
 
 module.exports = router;

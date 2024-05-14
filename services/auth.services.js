@@ -245,6 +245,7 @@ const refreshToken = async (refreshToken) => {
 
 const resetPassword = async (token, newPassword) => {
   const payload = await verifyToken(token);
+  console.log(payload)
   if (payload.error) {
     return {
       error: "reset password code is expired"
@@ -304,7 +305,7 @@ const forgotPassword = async (email, host, protocol) => {
     user.passwordCode = code;
     await user.save();
     const token = jwt.sign({userId : user.id, role: user.role, code: code}, process.env.JWT_SECRET_KEY, {expiresIn: '1d'});
-    const resetLink = `${protocol}://${host}/verify-link?token=${token}&email=${email}`;
+    const resetLink = `${protocol}://${host}/api/auth/verify-link?token=${token}&email=${email}`;
     const html = emailContent(user.fullname, host, resetLink);
     const response = await sendMail(email, html);
     if (response.error) {
