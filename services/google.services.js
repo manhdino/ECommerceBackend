@@ -31,7 +31,7 @@ const getUserInfor = async (accesToken) => {
 const findOrCreateUser = async (userInfor) => {
   try {
       const checkUser = await User.findOne({where: {email: userInfor.email}});
-      if (checkUser) {
+      if (checkUser && checkUser.googleId == null) {
         console.log('da dang ky')
         return {error: "This email is already registered."}
       }
