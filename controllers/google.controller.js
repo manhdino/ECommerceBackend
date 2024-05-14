@@ -5,7 +5,7 @@ const redirectAuth = async (req, res) => {
     try {
         const url = await googleService.getGoogleAuthUrl();
         // res.redirect(url);
-        rs.success(res, url);
+        rs.success(res, {data: url});
     }
     catch(err) {
         rs.error(res, "internal Server Error");
