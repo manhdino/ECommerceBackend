@@ -1,5 +1,6 @@
 paths:
 
+  
    /auth/sign-in:
     post:
       tags:
@@ -106,6 +107,112 @@ paths:
                   user:
                     type: object
                     $ref: '#/components/schemas/User'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /auth/forgot-password:
+    post:
+      tags:
+        - auth
+      description: Forgot password
+      operationId: forgot-pass
+      requestBody:
+        description:  Email address
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "manhnguyen1238@gmail.com"
+      responses:
+        '201':
+          description: Email  has sent successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Email has been sent successfully.Please check your inbox to reset your password
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /auth/reset-password:
+    post:
+      tags:
+        - auth
+      description: Reset password
+      operationId: reset-pass
+      requestBody:
+        description:  Reset information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password: 
+                  type: string
+                  example: "123456789"
+                confirmPassword:
+                  type: string
+                  example: "123456789"
+                resetPasswordToken:
+                  type: string
+                  format: email
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsInBhc3N3b3JkQ29kZSI6MTgwNzk2OCwiaWF0IjoxNzE1Njk1NzkzLCJleHAiOjE3MTU3ODIxOTN9.2mqbCphUZFj09AXwMQ_MxK79aI3_SA9YgfQLsr44gFU
+      responses:
+        '201':
+          description: Password reset successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Password reset successfully
                 status:
                  type: integer
                  example: 200
