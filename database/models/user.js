@@ -55,8 +55,8 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       google_id: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0,
+        type: DataTypes.STRING,
+        defaultValue: null,
       },
       created_at: {
         allowNull: false,

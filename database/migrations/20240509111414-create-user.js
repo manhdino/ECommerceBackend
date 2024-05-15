@@ -41,8 +41,8 @@ module.exports = {
         type: Sequelize.STRING,
       },
       google_id: {
-        type: Sequelize.INTEGER,
-        defaultValue: 0,
+        type: Sequelize.STRING,
+        defaultValue: null,
       },
       refresh_token: {
         type: Sequelize.STRING,

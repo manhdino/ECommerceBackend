@@ -37,10 +37,11 @@ module.exports = {
       const checkUser = await model.User.findOne({
         where: { email: userInfo.email },
       });
-      if (checkUser && checkUser.google_id > 0) {
+      if (checkUser && checkUser.google_id != null) {
         return { error: "Email is already registered." };
       }
       const googleId = userInfo.sub;
+
       const foundUser = await model.User.findOne({
         where: { google_id: googleId },
       });

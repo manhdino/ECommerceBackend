@@ -3,7 +3,11 @@ const rs = require("../helpers/error");
 
 const redirectAuth = async (req, res) => {
   const url = await googleService.getGoogleAuthUrl();
-  res.redirect(url);
+  console.log(url);
+  const response = {
+    data: url,
+  };
+  return rs.success(res, response);
 };
 
 const googleCallback = async (req, res) => {
@@ -13,22 +17,13 @@ const googleCallback = async (req, res) => {
     );
     const userInfo = await googleService.getUserInfo(tokens.access_token);
     const response = await googleService.findOrCreateUser(userInfo);
-    if (!response.error) {
-      res
-        .status(200)
-        .cookie("refresh_token", response.data.refreshToken, {
-          httpOnly: true,
-        })
-        .cookie("access_token", response.data.access_token, {
-          httpOnly: true,
-        })
-        .redirect("http://localhost:5173/home");
+    if (response.error) {
+      rs.error(res, response.error);
     } else {
-      res.redirect("http://localhost:5173/sign-in");
+      rs.success(res, response);
     }
   } catch (err) {
-    console.log(err);
-    res.redirect("http://localhost:3000/api/auth/sign-in");
+    res.redirect("http://localhost:5173/sign-in");
   }
 };
 

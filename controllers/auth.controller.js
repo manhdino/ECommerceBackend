@@ -107,19 +107,15 @@ module.exports = {
     if (response.error) {
       return rs.error(res, response.error);
     }
-    res.clearCookie("resetPasswordToken");
     return rs.success(res, response);
   },
   verifyLink: async (req, res) => {
     const token = req.query.token;
-    console.log(token);
     const response = await authService.verifyLink(token);
     if (response.error) {
-      res.redirect("http://localhost:5173/error");
+      rs.error(res, response.error);
     } else {
-      res
-        .cookie("resetPasswordToken", token)
-        .redirect("http://localhost:5173/reset-password");
+      rs.success(res, response);
     }
   },
 };
