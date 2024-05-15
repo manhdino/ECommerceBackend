@@ -44,8 +44,19 @@ module.exports = (sequelize, DataTypes) => {
       password_code: {
         type: DataTypes.STRING,
       },
+      picture: {
+        type: DataTypes.STRING,
+        defaultValue: "https://i.ibb.co/tBDhxh6/avatar.png",
+      },
       address: {
         type: DataTypes.TEXT,
+      },
+      refresh_token: {
+        type: DataTypes.STRING,
+      },
+      google_id: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
       },
       created_at: {
         allowNull: false,

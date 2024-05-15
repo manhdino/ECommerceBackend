@@ -2,13 +2,8 @@ const googleService = require("../services/google.services");
 const rs = require("../helpers/error");
 
 const redirectAuth = async (req, res) => {
-  try {
-    const url = await googleService.getGoogleAuthUrl();
-    // res.redirect(url);
-    rs.success(res, { data: url });
-  } catch (err) {
-    rs.error(res, "internal Server Error");
-  }
+  const url = await googleService.getGoogleAuthUrl();
+  res.redirect(url);
 };
 
 const googleCallback = async (req, res) => {
@@ -16,9 +11,8 @@ const googleCallback = async (req, res) => {
     const { tokens } = await googleService.oAuth2client.getToken(
       req.query.code
     );
-    const userInfor = await googleService.getUserInfor(tokens.access_token);
-    console.log(userInfor);
-    const response = await googleService.findOrCreateUser(userInfor);
+    const userInfo = await googleService.getUserInfo(tokens.access_token);
+    const response = await googleService.findOrCreateUser(userInfo);
     if (!response.error) {
       res
         .status(200)
