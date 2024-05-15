@@ -23,7 +23,7 @@ const options = {
     },
     servers: [
       {
-        url: "https://ecommercebackend-jb57.onrender.com/api",
+        url: "https://ecommercebackend-production-4f03.up.railway.app/api",
       },
       {
         url: "http://localhost:3000/api",
