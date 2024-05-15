@@ -112,7 +112,6 @@ module.exports = {
   },
   verifyLink: async (req, res) => {
     const token = req.query.token;
-    console.log(token);
     const response = await authService.verifyLink(token);
     if (response.error) {
       rs.error(res, response.error);
