@@ -9,4 +9,7 @@ router.post("/sign-out", auth, authController.signOut);
 router.get("/verify-link", authController.verifyLink);
 router.post("/forgot-password", authController.forgotPassword);
 router.post("/reset-password", authController.resetPassword);
+router.get("/google", googleController.redirectAuth);
+router.get("/google/callback", googleController.googleCallback);
+
 module.exports = router;
