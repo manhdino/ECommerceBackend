@@ -195,7 +195,7 @@ module.exports = {
       }
 
       return {
-        data: "Valid Link",
+        data: token,
       };
     } catch (err) {
       return {

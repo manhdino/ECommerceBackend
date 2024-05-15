@@ -115,11 +115,9 @@ module.exports = {
     console.log(token);
     const response = await authService.verifyLink(token);
     if (response.error) {
-      res.redirect("http://localhost:5173/error");
+      rs.error(res, response.error);
     } else {
-      res
-        .cookie("resetPasswordToken", token)
-        .redirect("http://localhost:5173/reset-password");
+      rs.success(res, response);
     }
   },
 };
