@@ -1,6 +1,4 @@
-paths:
 
-  
    /auth/sign-in:
     post:
       tags:
@@ -59,7 +57,40 @@ paths:
           content:
            application/json:
             schema:
-              $ref: '#/components/schemas/ValidateResponse'          
+              $ref: '#/components/schemas/ValidateResponse'    
+   /auth/google:
+    get:
+      tags:
+        - auth
+      description: Sign In using google account
+      operationId: sign-in-gg
+      responses:
+        '200':
+          description: User signed in successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: "Link to acccess login google account"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+             
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse' 
    /auth/sign-up:
     post:
       tags:

@@ -1,8 +1,7 @@
 const jwt = require("jsonwebtoken");
-// const {verifyToken, generateToken} = require('./auth.services')
 const model = require("../database/models");
-
 const { OAuth2Client } = require("google-auth-library");
+const fetch = require("node-fetch");
 
 const oAuth2client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -10,10 +9,15 @@ const oAuth2client = new OAuth2Client(
   process.env.REDIRECT_URI
 );
 
+const scopes = [
+  "https://www.googleapis.com/auth/userinfo.profile",
+  "https://www.googleapis.com/auth/userinfo.email",
+];
+
 module.exports = {
   oAuth2client,
+
   getGoogleAuthUrl: async () => {
-    const scopes = ["profile", "email"];
     const url = oAuth2client.generateAuthUrl({
       access_type: "offline",
       scope: scopes,
@@ -21,36 +25,52 @@ module.exports = {
     });
     return url;
   },
-  getUserInfo: async (accesToken) => {
+
+  getUserInfo: async (accessToken) => {
     const userInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
-    const response = await fetch(userInfoEndpoint, {
-      headers: {
-        Authorization: `Bearer ${accesToken}`,
-      },
-    });
-    const userInfo = await response.json();
-    return userInfo;
+    try {
+      const response = await fetch(userInfoEndpoint, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching user info: ${response.statusText}`);
+      }
+
+      const userInfo = await response.json();
+      return userInfo;
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      throw error;
+    }
   },
 
   findOrCreateUser: async (userInfo) => {
     try {
+      const { sub, email, picture } = userInfo;
+      const googleId = sub;
+
       const checkUser = await model.User.findOne({
         where: { email: userInfo.email },
       });
       if (checkUser && checkUser.google_id != null) {
         return { error: "Email is already registered." };
       }
-      const googleId = userInfo.sub;
 
       const foundUser = await model.User.findOne({
         where: { google_id: googleId },
       });
+
+      let payload, refreshToken, accessToken;
+
       if (foundUser) {
         payload = { userId: foundUser.id, role: foundUser.role };
-        const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+        refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
           expiresIn: "7d",
         });
-        const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+        accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
           expiresIn: "1d",
         });
         await model.User.update(
@@ -60,42 +80,44 @@ module.exports = {
         return {
           data: foundUser,
           refreshToken: refreshToken,
-          accesToken: accessToken,
+          accessToken: accessToken,
         };
       } else {
-        const email = userInfo.email;
-        const username = email;
-        const pricture = userInfo.picture;
         const createdUser = await model.User.create({
           email: email,
-          username: username,
+          username: email,
           google_id: googleId,
+          picture: picture,
           password: "/0",
           phone: "/0",
-          pricture: pricture,
+          picture: picture,
           created_at: new Date(),
           updated_at: new Date(),
         });
+
         payload = { userId: createdUser.id, role: createdUser.role };
-        const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+        refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
           expiresIn: "7d",
         });
-        const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+        accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
           expiresIn: "1d",
         });
+
         createdUser.refresh_token = refreshToken;
         await createdUser.save();
+
         return {
           data: {
             user: createdUser,
             refreshToken: refreshToken,
-            access_token: accessToken,
+            accessToken: accessToken,
           },
         };
       }
     } catch (err) {
+      console.error("Error in findOrCreateUser:", err);
       return {
-        error: err,
+        error: err.message,
       };
     }
   },
