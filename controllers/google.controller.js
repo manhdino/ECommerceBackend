@@ -26,10 +26,10 @@ const googleCallback = async(req, res) => {
             .cookie("access_token", response.data.access_token, {
                 httpOnly: true,
             })
-            .redirect('http://localhost:3000/home');
+            .redirect('http://localhost:5173/home');
         }
         else {
-            res.redirect('http://localhost:3000/api/auth/sign-in');
+            res.redirect('http://localhost:5173/sign-in');
         }
     }
     catch(err) {
