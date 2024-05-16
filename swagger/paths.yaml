@@ -1,4 +1,4 @@
-paths:
+aths:
 
    /auth/sign-in:
     post:
@@ -38,6 +38,63 @@ paths:
                     type: object
                     $ref: '#/components/schemas/User'
                    access_token:
+                     type: string
+                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTcxNDk2NjIxNCwiZXhwIjoxNzE0OTY5ODE0fQ.9TGf42_7umYPLE2pXkOdQ-HQgreKKK5Nwm6OyZIRwIU"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+             
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'    
+   /auth/refresh-token:
+    post:
+      tags:
+        - auth
+      description: Refresh Token
+      operationId: refresh-token
+      requestBody:
+        description: Token info
+        content:
+          application/json:
+            schema:
+               type: object
+               properties:
+                refreshToken:
+                 type: string
+                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzE1ODU2NjM4LCJleHAiOjE3MTU4ODE4Mzh9.xPeMPmagkqpWbwmc4bwXBbnKfboBDIhmBaLbDtglm30"
+               
+        required: true
+      responses:
+        '200':
+          description: Refresh token successfully updated
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: object
+                 properties:
+                   access_token:
+                     type: string
+                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTcxNDk2NjIxNCwiZXhwIjoxNzE0OTY5ODE0fQ.9TGf42_7umYPLE2pXkOdQ-HQgreKKK5Nwm6OyZIRwIU"
+                   refresh_token:
                      type: string
                      example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTcxNDk2NjIxNCwiZXhwIjoxNzE0OTY5ODE0fQ.9TGf42_7umYPLE2pXkOdQ-HQgreKKK5Nwm6OyZIRwIU"
                 status:
@@ -1482,7 +1539,7 @@ paths:
       tags:
         - order
       description: Delete order (Admn or Owner user)
-      operationId: delete-order
+      operationId: order-delete
       security:
         - BearerAuth: []
       parameters:
@@ -1526,4 +1583,3 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
-

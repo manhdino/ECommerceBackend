@@ -21,20 +21,7 @@ module.exports = {
       if (response.error) {
         return rs.error(res, response.error);
       }
-      const data = response.data;
-      if (response) {
-        res
-          .status(200)
-          .cookie("access_token", response.data.access_token, {
-            httpOnly: true,
-          })
-          .send({
-            success: true,
-            data,
-            status: 200,
-            message: "ok",
-          });
-      }
+      return rs.success(res, response);
     } catch (error) {
       return rs.error(res, error.message);
     }
@@ -117,6 +104,23 @@ module.exports = {
       rs.error(res, response.error);
     } else {
       rs.success(res, response);
+    }
+  },
+
+  refreshToken: async (req, res) => {
+    try {
+      const refreshToken = req?.body?.refreshToken;
+      if (!refreshToken) {
+        return rs.error(res, "Unauthorized");
+      }
+      const response = await authService.refreshToken(refreshToken);
+      if (response.error) {
+        return rs.error(res, response.error);
+      }
+      return rs.success(res, response);
+    } catch (err) {
+      console.log(err);
+      return rs.error(res, err.message);
     }
   },
 };

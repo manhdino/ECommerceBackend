@@ -3,6 +3,21 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { emailContent, sendMail } = require("./mail.services");
 const rs = require("../helpers/error");
+const generateToken = async (userId, role, time) => {
+  try {
+    const payload = { userId: userId, role: role };
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+      expiresIn: time,
+    });
+    return {
+      token,
+    };
+  } catch (err) {
+    return {
+      error: err,
+    };
+  }
+};
 module.exports = {
   signIn: async (data) => {
     try {
@@ -29,40 +44,39 @@ module.exports = {
           };
         }
       }
+      const accessToken = await generateToken(
+        checkUser.id,
+        checkUser.role,
+        "1h"
+      );
+      const refreshToken = await generateToken(
+        checkUser.id,
+        checkUser.role,
+        "7h"
+      );
+      console.log(accessToken, refreshToken);
 
-      const access_token = jwt.sign(
-        { userId: checkUser.id, role: checkUser.role },
-        process.env.JWT_SECRET_KEY,
+      await model.User.update(
         {
-          expiresIn: "5h",
+          refresh_token: refreshToken.token,
+        },
+        {
+          where: {
+            id: checkUser.id,
+          },
         }
       );
+
       const user = await model.User.findOne({
         where: {
           id: checkUser.id,
         },
-        attributes: { exclude: ["password"] },
+        attributes: { exclude: ["password", "refresh_token"] },
       });
-
-      // return {
-      //   data: {
-      //     user: {
-      //       id: checkUser.id,
-      //       username: checkUser.username,
-      //       email: checkUser.email,
-      //       fullname: checkUser.fullname,
-      //       role: checkUser.role,
-      //       phone: checkUser.phone,
-      //       address: checkUser.address,
-      //       created_at: checkUser.created_at,
-      //       updated_at: checkUser.updated_at,
-      //     },
-      //     access_token: access_token,
-      //   },
-      // };
       return {
         data: user,
-        access_token: access_token,
+        access_token: accessToken.token,
+        refresh_token: refreshToken.token,
       };
     } catch (error) {
       return {
@@ -90,14 +104,21 @@ module.exports = {
         created_at: new Date(),
         updated_at: new Date(),
       });
+      const accessToken = await generateToken(newUser.id, newUser.role, "1h");
+      const refreshToken = await generateToken(newUser.id, newUser.role, "7h");
+      newUser.refresh_token = refreshToken.token;
+      await newUser.save();
+
       const user = await model.User.findOne({
         where: {
           id: newUser.id,
         },
-        attributes: { exclude: ["password"] },
+        attributes: { exclude: ["password", "refresh_token"] },
       });
       return {
         data: user,
+        access_token: accessToken.token,
+        refresh_token: refreshToken.token,
       };
     } catch (error) {
       return {
@@ -110,7 +131,6 @@ module.exports = {
     try {
       const { password } = data;
       let userInfo = null;
-      console.log(token);
       jwt.verify(token, process.env.JWT_SECRET_KEY, (error, res) => {
         if (error) {
           return rs.unauthorized(res, "Unauthorized");
@@ -126,7 +146,6 @@ module.exports = {
           id: userInfo.userId,
         },
       });
-      console.log(userInfo, password);
       if (userInfo.passwordCode != checkUser.password_code) {
       }
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -180,17 +199,23 @@ module.exports = {
 
   verifyLink: async (token) => {
     try {
+      let userInfo = null;
       jwt.verify(token, process.env.JWT_SECRET_KEY, (error, res) => {
         if (error) {
           return rs.unauthorized(res, "Unauthorized");
         }
-        if (res) {
+        if (res.userId) {
           userInfo = res;
         } else {
           return rs.unauthorized(res, "Unauthorized");
         }
       });
 
+      if (!userInfo) {
+        return {
+          error: "Unauthorized!",
+        };
+      }
       const checkUser = await model.User.findOne({
         where: {
           id: userInfo.userId,
@@ -208,6 +233,46 @@ module.exports = {
     } catch (err) {
       return {
         error: err,
+      };
+    }
+  },
+
+  refreshToken: async (refreshToken) => {
+    try {
+      let userInfo = null;
+      jwt.verify(refreshToken, process.env.JWT_SECRET_KEY, (error, user) => {
+        if (error) {
+          return rs.unauthorized(res, "Refresh token is expired");
+        }
+        if (user.userId) {
+          userInfo = user;
+        } else {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+      });
+      const checkUser = await model.User.findOne({
+        where: {
+          id: userInfo.userId,
+        },
+      });
+      if (checkUser) {
+        return {
+          data: {
+            access_token: (
+              await generateToken(checkUser.id, checkUser.role, "1h")
+            ).token,
+            refresh_token: (
+              await generateToken(checkUser.id, checkUser.role, "7d")
+            ).token,
+          },
+        };
+      }
+      return {
+        error: "User not found",
+      };
+    } catch (err) {
+      return {
+        error: err.message,
       };
     }
   },
