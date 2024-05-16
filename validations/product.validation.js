@@ -8,7 +8,6 @@ module.exports = {
   seller: Joi.string().max(20),
   price: Joi.number(),
   quantity: Joi.number().integer().min(1),
-  ratings: Joi.number().integer(),
   stock: Joi.number().integer(),
   img: Joi.string(),
 };

@@ -102,7 +102,6 @@ module.exports = {
           description,
           price,
           quantity,
-          ratings,
           stock,
           img,
         },

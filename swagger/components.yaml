@@ -166,10 +166,6 @@ components:
         type: integer
         example: 1
         default: 1
-      ratings:
-        type: number
-        minimum: 1
-        example: 4
       stock:
         type: number
         example: 12
