@@ -1,6 +1,5 @@
 paths:
 
-  
    /auth/sign-in:
     post:
       tags:
@@ -59,8 +58,8 @@ paths:
           content:
            application/json:
             schema:
-              $ref: '#/components/schemas/ValidateResponse' 
-    /auth/google:
+              $ref: '#/components/schemas/ValidateResponse'    
+   /auth/google:
     get:
       tags:
         - auth
@@ -104,7 +103,7 @@ paths:
           content:
            application/json:
             schema:
-              $ref: '#/components/schemas/ValidateResponse'             
+              $ref: '#/components/schemas/ValidateResponse'    
    /auth/sign-up:
     post:
       tags:
@@ -1527,3 +1526,4 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
+
