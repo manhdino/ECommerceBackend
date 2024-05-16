@@ -1,4 +1,4 @@
-aths:
+paths:
 
    /auth/sign-in:
     post:
