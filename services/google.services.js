@@ -56,7 +56,22 @@ module.exports = {
         where: { email: userInfo.email },
       });
       if (checkUser && checkUser.google_id != null) {
-        return { error: "Email is already registered." };
+        const payload = { userId: checkUser.id, role: checkUser.role };
+        const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "7d",
+        });
+        const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "1d",
+        });
+        await model.User.update(
+          { refresh_token: refreshToken },
+          { where: { google_id: checkUser.google_id } }
+        );
+        return {
+          data: foundUser,
+          refreshToken: refreshToken,
+          accessToken: accessToken,
+        };
       }
 
       const foundUser = await model.User.findOne({
