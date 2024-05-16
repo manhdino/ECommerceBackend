@@ -17,15 +17,17 @@ module.exports = {
           error: "Email not found",
         };
       }
-      const isPasswordValid = await bcrypt.compare(
-        password,
-        checkUser.password
-      );
+      if (!checkUser.google_id) {
+        const isPasswordValid = await bcrypt.compare(
+          password,
+          checkUser.password
+        );
 
-      if (!isPasswordValid) {
-        return {
-          error: "Invalid password",
-        };
+        if (!isPasswordValid) {
+          return {
+            error: "Invalid password",
+          };
+        }
       }
 
       const access_token = jwt.sign(
@@ -35,22 +37,32 @@ module.exports = {
           expiresIn: "5h",
         }
       );
-
-      return {
-        data: {
-          user: {
-            id: checkUser.id,
-            username: checkUser.username,
-            email: checkUser.email,
-            fullname: checkUser.fullname,
-            role: checkUser.role,
-            phone: checkUser.phone,
-            address: checkUser.address,
-            created_at: checkUser.created_at,
-            updated_at: checkUser.updated_at,
-          },
-          access_token: access_token,
+      const user = await model.User.findOne({
+        where: {
+          id: checkUser.id,
         },
+        attributes: { exclude: ["password"] },
+      });
+
+      // return {
+      //   data: {
+      //     user: {
+      //       id: checkUser.id,
+      //       username: checkUser.username,
+      //       email: checkUser.email,
+      //       fullname: checkUser.fullname,
+      //       role: checkUser.role,
+      //       phone: checkUser.phone,
+      //       address: checkUser.address,
+      //       created_at: checkUser.created_at,
+      //       updated_at: checkUser.updated_at,
+      //     },
+      //     access_token: access_token,
+      //   },
+      // };
+      return {
+        data: user,
+        access_token: access_token,
       };
     } catch (error) {
       return {
@@ -78,18 +90,14 @@ module.exports = {
         created_at: new Date(),
         updated_at: new Date(),
       });
-      return {
-        data: {
+      const user = await model.User.findOne({
+        where: {
           id: newUser.id,
-          username: newUser.username,
-          email: newUser.email,
-          fullname: newUser.fullname,
-          role: newUser.role,
-          phone: newUser.phone,
-          address: newUser.address,
-          created_at: newUser.created_at,
-          updated_at: newUser.updated_at,
         },
+        attributes: { exclude: ["password"] },
+      });
+      return {
+        data: user,
       };
     } catch (error) {
       return {
