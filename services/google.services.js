@@ -55,7 +55,7 @@ module.exports = {
       const checkUser = await model.User.findOne({
         where: { email: userInfo.email },
       });
-      if (checkUser && checkUser.google_id != null) {
+      if (checkUser && checkUser.google_id == googleId) {
         const payload = { userId: checkUser.id, role: checkUser.role };
         const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
           expiresIn: "7d",
@@ -68,36 +68,13 @@ module.exports = {
           { where: { google_id: checkUser.google_id } }
         );
         return {
-          data: foundUser,
+          data: checkUser,
           refreshToken: refreshToken,
           accessToken: accessToken,
         };
       }
 
-      const foundUser = await model.User.findOne({
-        where: { google_id: googleId },
-      });
-
-      let payload, refreshToken, accessToken;
-
-      if (foundUser) {
-        payload = { userId: foundUser.id, role: foundUser.role };
-        refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-          expiresIn: "7d",
-        });
-        accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
-          expiresIn: "1d",
-        });
-        await model.User.update(
-          { refresh_token: refreshToken },
-          { where: { google_id: googleId } }
-        );
-        return {
-          data: foundUser,
-          refreshToken: refreshToken,
-          accessToken: accessToken,
-        };
-      } else {
+      if (!checkUser) {
         const createdUser = await model.User.create({
           email: email,
           username: email,
@@ -120,13 +97,29 @@ module.exports = {
 
         createdUser.refresh_token = refreshToken;
         await createdUser.save();
-
         return {
           data: {
             user: createdUser,
             refreshToken: refreshToken,
             accessToken: accessToken,
           },
+        };
+      } else {
+        const payload = { userId: checkUser.id, role: checkUser.role };
+        const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "7d",
+        });
+        const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "1d",
+        });
+        await model.User.update(
+          { refresh_token: refreshToken, google_id: googleId },
+          { where: { id: checkUser.id } }
+        );
+        return {
+          data: checkUser,
+          refreshToken: refreshToken,
+          accessToken: accessToken,
         };
       }
     } catch (err) {
