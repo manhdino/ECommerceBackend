@@ -6,7 +6,7 @@ const fetch = require("node-fetch");
 const oAuth2client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  process.env.REDIRECT_URI
+  "https://ecommercebackend-953d.up.railway.app/api/auth/google/callback"
 );
 
 const scopes = [
