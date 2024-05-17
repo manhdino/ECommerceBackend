@@ -20,6 +20,7 @@ const googleCallback = async (req, res) => {
     if (!response.error) {
       res
         .status(200)
+        .cookie("userInfo", response.data.user)
         .cookie("refresh_token", response.data.refreshToken, {
           httpOnly: true,
         })
