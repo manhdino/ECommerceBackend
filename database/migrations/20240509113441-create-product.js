@@ -39,7 +39,7 @@ module.exports = {
       },
       ratings: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        defaultValue: 0,
       },
       stock: {
         type: Sequelize.INTEGER,

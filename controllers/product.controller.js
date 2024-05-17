@@ -9,7 +9,6 @@ const {
   price,
   quantity,
   stock,
-  ratings,
   img,
 } = require("../validations/product.validation");
 const validator = require("../helpers/validator");
@@ -71,7 +70,6 @@ module.exports = {
           description,
           price,
           quantity,
-          ratings,
           stock,
           img,
         },

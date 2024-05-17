@@ -44,7 +44,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       ratings: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        defaultValue: 0,
       },
       stock: {
         type: DataTypes.INTEGER,

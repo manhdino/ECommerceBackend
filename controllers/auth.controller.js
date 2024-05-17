@@ -101,9 +101,11 @@ module.exports = {
     const token = req.query.token;
     const response = await authService.verifyLink(token);
     if (response.error) {
-      rs.error(res, response.error);
+      res.redirect("http://localhost:5173/error");
     } else {
-      rs.success(res, response);
+      res
+        .cookie("resetPasswordToken", token)
+        .redirect("http://localhost:5173/reset-password");
     }
   },
 
