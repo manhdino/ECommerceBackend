@@ -1,4 +1,5 @@
 const model = require("../database/models");
+const { price } = require("../validations/product.validation");
 
 module.exports = {
   index: async (data) => {
@@ -71,33 +72,36 @@ module.exports = {
         };
       }
 
-      const [response, created] = await model.Cart.findOrCreate({
+      const checkCart = await model.Cart.findOne({
         where: {
           product_id: productId,
         },
-        defaults: {
-          product_id: productId,
-          user_id: userInfo.userId,
-          price: checkProduct.price,
-          quantity: quantity,
-          created_at: new Date(),
-          updated_at: new Date(),
-        },
       });
 
-      if (!created) {
-        if (response) {
-          response.quantity = quantity;
-          await response.save();
-        } else {
-          return {
-            error: "Failed to update product quantity in cart",
-          };
-        }
+      if (checkCart) {
+        checkCart.quantity = quantity;
+        checkCart.updated_at = new Date();
+        await checkCart.save();
+        return {
+          data: "Add product to cart successfully",
+        };
       }
+      const createdCart = await model.Cart.create({
+        product_id: productId,
+        user_id: userInfo.userId,
+        price: checkProduct.price,
+        quantity: quantity,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
 
+      if (createdCart) {
+        return {
+          data: "Add product to cart successfully",
+        };
+      }
       return {
-        data: "Add product to cart successfully",
+        error: "Failed to add product to cart",
       };
     } catch (error) {
       return {
