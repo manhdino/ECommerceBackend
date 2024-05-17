@@ -23,10 +23,10 @@ const googleCallback = async (req, res) => {
         .cookie("refresh_token", response.data.refreshToken, {
           httpOnly: true,
         })
-        .cookie("access_token", response.data.access_token, {
+        .cookie("access_token", response.data.accessToken, {
           httpOnly: true,
         })
-        .redirect("http://localhost:5173/home");
+        .redirect("http://localhost:5173");
     } else {
       res.redirect("http://localhost:5173/sign-in");
     }
