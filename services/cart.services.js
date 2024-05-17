@@ -1,5 +1,4 @@
 const model = require("../database/models");
-const { price } = require("../validations/product.validation");
 
 module.exports = {
   index: async (data) => {
@@ -72,9 +71,12 @@ module.exports = {
         };
       }
 
+      console.log(productId, quantity, userInfo);
+
       const checkCart = await model.Cart.findOne({
         where: {
           product_id: productId,
+          user_id: userInfo.userId,
         },
       });
 
