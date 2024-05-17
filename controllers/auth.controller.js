@@ -113,10 +113,13 @@ module.exports = {
   verifyLink: async (req, res) => {
     const token = req.query.token;
     const response = await authService.verifyLink(token);
+
     if (response.error) {
-      rs.error(res, response.error);
+      res.redirect("http://localhost:5173/error"); //chuyen den trang link loi ben fe
     } else {
-      rs.success(res, response);
+      res
+        .cookie("passwordCode", token)
+        .redirect("http://localhost:5173/reset-password"); //chuyen den trang reset password
     }
   },
 };
