@@ -3,7 +3,6 @@ const rs = require("../helpers/error");
 
 const redirectAuth = async (req, res) => {
   const url = await googleService.getGoogleAuthUrl();
-  console.log(url);
   const response = {
     data: url,
   };
@@ -17,10 +16,8 @@ const googleCallback = async (req, res) => {
     );
     const userInfo = await googleService.getUserInfo(tokens.access_token);
     const response = await googleService.findOrCreateUser(userInfo);
-    console.log(response);
     if (!response.error) {
-      res
-        .status(200)
+      rs.success(res, response.data)
         .cookie("refresh_token", response.refreshToken, {
           httpOnly: true,
         })

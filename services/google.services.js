@@ -42,7 +42,6 @@ module.exports = {
       const userInfo = await response.json();
       return userInfo;
     } catch (error) {
-      console.error("Error fetching user info:", error);
       throw error;
     }
   },
@@ -123,7 +122,6 @@ module.exports = {
         };
       }
     } catch (err) {
-      console.error("Error in findOrCreateUser:", err);
       return {
         error: err.message,
       };

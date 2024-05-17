@@ -121,7 +121,6 @@ module.exports = {
       }
       return rs.success(res, response);
     } catch (err) {
-      console.log(err);
       return rs.error(res, err.message);
     }
   },

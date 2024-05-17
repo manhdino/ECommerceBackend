@@ -54,7 +54,6 @@ module.exports = {
         checkUser.role,
         "7h"
       );
-      console.log(accessToken, refreshToken);
 
       await model.User.update(
         {
