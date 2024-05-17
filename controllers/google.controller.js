@@ -16,12 +16,14 @@ const googleCallback = async (req, res) => {
     );
     const userInfo = await googleService.getUserInfo(tokens.access_token);
     const response = await googleService.findOrCreateUser(userInfo);
+
     if (!response.error) {
-      rs.success(res, response.data)
-        .cookie("refresh_token", response.refreshToken, {
+      res
+        .status(200)
+        .cookie("refresh_token", response.data.refreshToken, {
           httpOnly: true,
         })
-        .cookie("access_token", response.accessToken, {
+        .cookie("access_token", response.data.accessToken, {
           httpOnly: true,
         })
         .redirect("http://localhost:5173");

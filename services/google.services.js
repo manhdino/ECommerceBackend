@@ -67,9 +67,11 @@ module.exports = {
           { where: { google_id: checkUser.google_id } }
         );
         return {
-          data: checkUser,
-          refreshToken: refreshToken,
-          accessToken: accessToken,
+          data: {
+            user: checkUser,
+            refreshToken: refreshToken,
+            accessToken: accessToken,
+          },
         };
       }
 
@@ -116,9 +118,11 @@ module.exports = {
           { where: { id: checkUser.id } }
         );
         return {
-          data: checkUser,
-          refreshToken: refreshToken,
-          accessToken: accessToken,
+          data: {
+            user: checkUser,
+            refreshToken: refreshToken,
+            accessToken: accessToken,
+          },
         };
       }
     } catch (err) {
