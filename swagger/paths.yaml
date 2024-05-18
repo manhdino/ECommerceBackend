@@ -477,7 +477,7 @@ paths:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
    /users/{userId}:
-    get:
+    get: 
       tags:
         - user
       description: Get details user(Admin or owner account)
@@ -1118,7 +1118,6 @@ paths:
                 categoryId:
                   type: integer
                   example: 1
-                
                 name:
                   type: string
                   example: "Ultraboost - White/Black"
@@ -1138,14 +1137,7 @@ paths:
                 img:
                   type: string
                   format: binary
-              required:
-                - categoryId
-                - name
-                - description
-                - seller
-                - price
-                - stock
-                - img
+    
             
                  
       responses:

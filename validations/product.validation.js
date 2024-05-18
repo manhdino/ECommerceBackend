@@ -1,12 +1,12 @@
 const Joi = require("joi");
 
 module.exports = {
-  name: Joi.string().max(100).required(),
+  name: Joi.string().max(100),
+  categoryId: Joi.number().integer(),
   productId: Joi.number().integer().required(),
-  categoryId: Joi.number().integer().required(),
-  description: Joi.string().required(),
-  seller: Joi.string().max(20).required(),
-  price: Joi.number().required(),
+  description: Joi.string(),
+  seller: Joi.string().max(20),
+  price: Joi.number(),
   stock: Joi.number().integer(),
-  img: Joi.string().required(),
+  img: Joi.string(),
 };
