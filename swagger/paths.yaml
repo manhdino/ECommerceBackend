@@ -1009,7 +1009,7 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
-    /products/create:
+   /products/create:
     post:
       tags:
         - product
