@@ -7,10 +7,10 @@ const {
   seller,
   description,
   price,
-  quantity,
   stock,
   img,
 } = require("../validations/product.validation");
+const cloudinary = require("cloudinary").v2;
 const validator = require("../helpers/validator");
 module.exports = {
   index: async (req, res) => {
@@ -62,6 +62,7 @@ module.exports = {
   },
   create: async (req, res) => {
     try {
+      const file = req.file;
       const { error } = validator(
         {
           name,
@@ -69,16 +70,23 @@ module.exports = {
           seller,
           description,
           price,
-          quantity,
           stock,
           img,
         },
-        req.body
+        {
+          ...req.body,
+          img: file?.path,
+        }
       );
+
       if (error) {
+        if (file) {
+          cloudinary.uploader.destroy(file.filename);
+        }
         return rs.validate(res, error.details[0].message);
       }
-      const response = await productService.create(req.body);
+
+      const response = await productService.create(req.body, req.file);
       if (response.error) {
         return rs.error(res, response.error);
       }
@@ -91,30 +99,36 @@ module.exports = {
   },
   update: async (req, res) => {
     try {
+      const file = req.file;
       const { error } = validator(
         {
           name,
-          productId,
           categoryId,
           seller,
           description,
           price,
-          quantity,
           stock,
           img,
         },
         {
           ...req.body,
-          ...req.params,
+          img: file?.path,
         }
       );
+
       if (error) {
+        if (file) {
+          cloudinary.uploader.destroy(file.filename);
+        }
         return rs.validate(res, error.details[0].message);
       }
-      const response = await productService.update({
-        ...req.body,
-        ...req.params,
-      });
+      const response = await productService.update(
+        {
+          ...req.body,
+          ...req.params,
+        },
+        req.file
+      );
       if (response.error) {
         return rs.error(res, response.error);
       }
