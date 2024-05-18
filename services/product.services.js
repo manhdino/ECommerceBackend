@@ -23,7 +23,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -52,7 +52,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -84,7 +84,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -126,7 +126,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -135,6 +135,7 @@ module.exports = {
     try {
       const { categoryId, productId, ...productInfo } = data;
       const { path, filename } = file;
+      console.log(filename);
       const checkProduct = await model.Product.findByPk(productId);
       if (!checkProduct) {
         if (file) {
@@ -191,7 +192,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -217,7 +218,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },

@@ -1140,7 +1140,7 @@ paths:
                 img:
                   type: string
                   format: binary
-                  required: false 
+       
               required:
                 - categoryId
                 - name

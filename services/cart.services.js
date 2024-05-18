@@ -57,7 +57,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -107,7 +107,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -144,7 +144,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },

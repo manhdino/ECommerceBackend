@@ -79,7 +79,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        data: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -121,7 +121,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        data: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -153,9 +153,9 @@ module.exports = {
       return {
         data: "Password reset successfully",
       };
-    } catch (err) {
+    } catch (error) {
       return {
-        error: err,
+        error: error.errors[0].message,
       };
     }
   },
@@ -189,9 +189,9 @@ module.exports = {
       return {
         data: response.info,
       };
-    } catch (err) {
+    } catch (error) {
       return {
-        error: err,
+        error: error.errors[0].message,
       };
     }
   },
@@ -229,9 +229,9 @@ module.exports = {
       return {
         data: token,
       };
-    } catch (err) {
+    } catch (error) {
       return {
-        error: err,
+        error: error.errors[0].message,
       };
     }
   },
@@ -269,9 +269,9 @@ module.exports = {
       return {
         error: "User not found",
       };
-    } catch (err) {
+    } catch (error) {
       return {
-        error: err.message,
+        error: error.errors[0].message,
       };
     }
   },
