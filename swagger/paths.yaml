@@ -1009,7 +1009,7 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
-   /products/create:
+    /products/create:
     post:
       tags:
         - product
@@ -1021,17 +1021,41 @@ paths:
         description: Product Information
         required: true
         content:
-          application/json:
+         multipart/form-data:
             schema:
-             type: object
-             allOf:
-              - type: object
-                properties:
-                  categoryId:
-                    type: integer
-                    format: int64
-                    example: 1
-              - $ref: "#/components/schemas/BaseProduct"
+              type: object
+              properties:
+                categoryId:
+                  type: integer
+                  example: 1
+            
+                name:
+                  type: string
+                  example: "Ultraboost - White/Black"
+                description:
+                  type: string
+                  example: "Inspired by the original low-profile tennis shoe, the Nike Killshot 2 updates the upper with a variety of textured leathers to create a fresh look. From soft suedes to smooth leathers with the perfect sheen, it's court-side attitude with a modern touch."
+                seller:
+                  type: string
+                  example: "Adidas"
+                price:
+                  type: number
+                  format: float
+                  example: 112.34
+                stock:
+                  type: integer
+                  example: 12
+                img:
+                  type: string
+                  format: binary
+              required:
+                - categoryId
+                - name
+                - description
+                - seller
+                - price
+                - stock
+                - img
             
                  
       responses:
@@ -1087,17 +1111,41 @@ paths:
         description: Product Information
         required: true
         content:
-          application/json:
+         multipart/form-data:
             schema:
-             type: object
-             allOf:
-              - type: object
-                properties:
-                  categoryId:
-                    type: integer
-                    format: int64
-                    example: 1
-              - $ref: "#/components/schemas/BaseProduct"
+              type: object
+              properties:
+                categoryId:
+                  type: integer
+                  example: 1
+                
+                name:
+                  type: string
+                  example: "Ultraboost - White/Black"
+                description:
+                  type: string
+                  example: "Inspired by the original low-profile tennis shoe, the Nike Killshot 2 updates the upper with a variety of textured leathers to create a fresh look. From soft suedes to smooth leathers with the perfect sheen, it's court-side attitude with a modern touch."
+                seller:
+                  type: string
+                  example: "Adidas"
+                price:
+                  type: number
+                  format: float
+                  example: 112.34
+                stock:
+                  type: integer
+                  example: 12
+                img:
+                  type: string
+                  format: binary
+              required:
+                - categoryId
+                - name
+                - description
+                - seller
+                - price
+                - stock
+                - img
             
                  
       responses:
