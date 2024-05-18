@@ -1140,11 +1140,15 @@ paths:
                 img:
                   type: string
                   format: binary
-                  required: false
-                  
-    
-            
-                 
+                  required: false 
+              required:
+                - categoryId
+                - name
+                - description
+                - seller
+                - price
+                - stock
+                - img  
       responses:
         '200':
           description: Post updated successfully

@@ -118,7 +118,7 @@ module.exports = {
 
       if (error) {
         if (file) {
-          cloudinary.uploader.destroy(file.filename);
+          cloudinary.uploader.destroy(file?.filename);
         }
         return rs.validate(res, error.details[0].message);
       }
