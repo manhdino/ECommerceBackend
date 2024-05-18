@@ -1127,16 +1127,21 @@ paths:
                 seller:
                   type: string
                   example: "Adidas"
+                 
                 price:
                   type: number
                   format: float
                   example: 112.34
+                
                 stock:
                   type: integer
                   example: 12
+                 
                 img:
                   type: string
                   format: binary
+                  required: false
+                  
     
             
                  
