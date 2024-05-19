@@ -6,7 +6,8 @@ const fetch = require("node-fetch");
 const oAuth2client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  "https://ecommercebackend-953d.up.railway.app/api/auth/google/callback"
+  // "https://ecommercebackend-953d.up.railway.app/api/auth/google/callback"
+  "http://localhost:5173/get-infor"
 );
 
 const scopes = [
@@ -74,6 +75,9 @@ module.exports = {
           },
         };
       }
+      else if (checkUser && checkUser.google_id != googleId) {
+        return {error: "email đã được đăng ký như tài khoản thường."}
+      }
 
       if (!checkUser) {
         const createdUser = await model.User.create({
@@ -105,7 +109,8 @@ module.exports = {
             accessToken: accessToken,
           },
         };
-      } else {
+      } 
+      else {
         const payload = { userId: checkUser.id, role: checkUser.role };
         const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
           expiresIn: "7d",

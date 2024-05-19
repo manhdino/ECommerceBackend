@@ -9,29 +9,25 @@ const redirectAuth = async (req, res) => {
   return rs.success(res, response);
 };
 
-const googleCallback = async (req, res) => {
+const getInforFromGoogle = async (req, res) => {
   try {
     const { tokens } = await googleService.oAuth2client.getToken(
-      req.query.code
+      req.body.code
     );
     const userInfo = await googleService.getUserInfo(tokens.access_token);
     const response = await googleService.findOrCreateUser(userInfo);
 
     if (!response.error) {
-      res
-        .cookie("userInfo", response.data.user)
-        .cookie("refresh_token", response.data.refreshToken)
-        .cookie("access_token", response.data.accessToken)
-        .redirect("http://localhost:5173");
+      rs.success(res, response)
     } else {
-      res.redirect("http://localhost:5173/sign-in");
+      rs.error(res, response.error)
     }
   } catch (err) {
-    res.redirect("http://localhost:5173/sign-in");
+    rs.error(res, err)
   }
 };
 
 module.exports = {
   redirectAuth,
-  googleCallback,
+  getInforFromGoogle,
 };
