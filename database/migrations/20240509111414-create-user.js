@@ -56,15 +56,6 @@ module.exports = {
         type: Sequelize.TEXT,
         allowNull: false,
       },
-      googleId: {
-        type: Sequelize.STRING
-      },
-      refreshToken: {
-        type: Sequelize.STRING
-      },
-      passwordCode: {
-        type: Sequelize.STRING
-      },
       created_at: {
         allowNull: false,
         type: Sequelize.DATE,
