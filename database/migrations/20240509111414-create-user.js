@@ -15,15 +15,11 @@ module.exports = {
       },
       fullname: {
         type: Sequelize.STRING(100),
-        allowNull: false,
       },
       email: {
         type: Sequelize.STRING(30),
         unique: true,
         allowNull: false,
-      },
-      avatar: {
-        type: Sequelize.TEXT,
       },
       role: {
         type: Sequelize.STRING(10),
@@ -36,7 +32,6 @@ module.exports = {
       },
       phone: {
         type: Sequelize.STRING(20),
-        allowNull: false,
       },
       password: {
         type: Sequelize.STRING,
@@ -54,7 +49,6 @@ module.exports = {
       },
       address: {
         type: Sequelize.TEXT,
-        allowNull: false,
       },
       created_at: {
         allowNull: false,
