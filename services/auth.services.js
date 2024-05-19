@@ -170,6 +170,11 @@ module.exports = {
           error: "Email not found",
         };
       }
+      if (checkUser.google_id) {
+        return {
+          error: "This email is registered as a Google account"
+        }
+      }
       const passwordCode = Math.floor(Math.random() * 1000000) + 1000000;
       checkUser.password_code = passwordCode;
       await checkUser.save();
