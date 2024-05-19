@@ -97,9 +97,7 @@ module.exports = {
       if (response) {
         res
           .status(200)
-          .cookie("access_token", response.data.access_token, {
-            httpOnly: true,
-          })
+          .cookie("access_token", response.data.access_token)
           .send({
             success: true,
             data,
