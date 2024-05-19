@@ -21,14 +21,12 @@ module.exports = {
           stock: product.stock,
           ratings: product.ratings,
           img: product.img,
-          quantity: product.quantity,
           description: product.description,
           created_at: new Date(),
           updated_at: new Date(),
         });
       });
       await queryInterface.bulkInsert("Products", productsWithCategoryIds);
-      console.log("Data inserted successfully.");
     } catch (error) {
       console.error("Error inserting data:", error);
     }

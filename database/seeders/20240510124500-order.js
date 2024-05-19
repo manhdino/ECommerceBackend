@@ -7,7 +7,7 @@ module.exports = {
     users = users.sort((a, b) => a.id - b.id);
     await queryInterface.bulkInsert("Orders", [
       {
-        ordered_by: users[0].id,
+        user_id: users[0].id,
         payment_method: "cod",
         amount: 1345.34,
         status: "created",
@@ -15,7 +15,7 @@ module.exports = {
         updated_at: new Date(),
       },
       {
-        ordered_by: users[1].id,
+        user_id: users[1].id,
         payment_method: "banking",
         amount: 200.67,
         status: "processing",
@@ -23,7 +23,7 @@ module.exports = {
         updated_at: new Date(),
       },
       {
-        ordered_by: users[2].id,
+        user_id: users[2].id,
         payment_method: "cod",
         amount: 1200,
         status: "shipping",

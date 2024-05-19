@@ -30,6 +30,10 @@ module.exports = {
         defaultValue: "user",
         allowNull: false,
       },
+      picture: {
+        type: Sequelize.STRING,
+        defaultValue: "https://i.ibb.co/tBDhxh6/avatar.png",
+      },
       phone: {
         type: Sequelize.STRING(20),
         allowNull: false,
@@ -37,6 +41,16 @@ module.exports = {
       password: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      password_code: {
+        type: Sequelize.STRING,
+      },
+      google_id: {
+        type: Sequelize.STRING,
+        defaultValue: null,
+      },
+      refresh_token: {
+        type: Sequelize.STRING,
       },
       address: {
         type: Sequelize.TEXT,

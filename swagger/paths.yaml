@@ -1,9 +1,10 @@
 paths:
+
    /auth/sign-in:
     post:
       tags:
         - auth
-      description: Allows users to sign in to the application with their credentials. 
+      description: Sign In 
       operationId: sign-in
       requestBody:
         description: User Information
@@ -57,12 +58,114 @@ paths:
           content:
            application/json:
             schema:
-              $ref: '#/components/schemas/ValidateResponse'          
+              $ref: '#/components/schemas/ValidateResponse'    
+   /auth/refresh-token:
+    post:
+      tags:
+        - auth
+      description: Refresh Token
+      operationId: refresh-token
+      requestBody:
+        description: Token info
+        content:
+          application/json:
+            schema:
+               type: object
+               properties:
+                refreshToken:
+                 type: string
+                 example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzE1ODU2NjM4LCJleHAiOjE3MTU4ODE4Mzh9.xPeMPmagkqpWbwmc4bwXBbnKfboBDIhmBaLbDtglm30"
+               
+        required: true
+      responses:
+        '200':
+          description: Refresh token successfully updated
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: object
+                 properties:
+                   access_token:
+                     type: string
+                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTcxNDk2NjIxNCwiZXhwIjoxNzE0OTY5ODE0fQ.9TGf42_7umYPLE2pXkOdQ-HQgreKKK5Nwm6OyZIRwIU"
+                   refresh_token:
+                     type: string
+                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTcxNDk2NjIxNCwiZXhwIjoxNzE0OTY5ODE0fQ.9TGf42_7umYPLE2pXkOdQ-HQgreKKK5Nwm6OyZIRwIU"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+             
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'    
+   /auth/google:
+    get:
+      tags:
+        - auth
+      description: Sign In using google account
+      operationId: sign-in-gg
+      responses:
+        '200':
+          description: User signed in successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: object
+                 properties:
+                   user:
+                    type: object
+                    $ref: '#/components/schemas/User'
+                   access_token:
+                     type: string
+                     example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsImlhdCI6MTcxNDk2NjIxNCwiZXhwIjoxNzE0OTY5ODE0fQ.9TGf42_7umYPLE2pXkOdQ-HQgreKKK5Nwm6OyZIRwIU"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+             
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'    
    /auth/sign-up:
     post:
       tags:
         - auth
-      description: Create a new user with the provided credentials.
+      description: Sign Up
       operationId: sign-up
       requestBody:
         description:  User Information
@@ -72,6 +175,10 @@ paths:
             schema:
               type: object
               properties:
+                username:
+                  type: string
+                  format: email
+                  example: "nhatminh"
                 email:
                   type: string
                   format: email
@@ -119,12 +226,221 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
+   /auth/forgot-password:
+    post:
+      tags:
+        - auth
+      description: Forgot password
+      operationId: forgot-pass
+      requestBody:
+        description:  Email address
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: "manhnguyen1238@gmail.com"
+      responses:
+        '201':
+          description: Email  has sent successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Email has been sent successfully.Please check your inbox to reset your password
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /auth/reset-password:
+    post:
+      tags:
+        - auth
+      description: Reset password
+      operationId: reset-pass
+      requestBody:
+        description:  Reset information
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password: 
+                  type: string
+                  example: "123456789"
+                confirmPassword:
+                  type: string
+                  example: "123456789"
+                resetPasswordToken:
+                  type: string
+                  format: email
+                  example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjUsInBhc3N3b3JkQ29kZSI6MTgwNzk2OCwiaWF0IjoxNzE1Njk1NzkzLCJleHAiOjE3MTU3ODIxOTN9.2mqbCphUZFj09AXwMQ_MxK79aI3_SA9YgfQLsr44gFU
+      responses:
+        '201':
+          description: Password reset successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Password reset successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /auth/sign-out:
+     post:
+      tags:
+        - auth
+      description: Sign Out (Admin or User)
+      operationId: sign-out
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Signed out successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: object
+                 example: "Signed out successfully"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+             
+        '404':
+          description: Failed to sign out
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+   /users/update-password/{userId}:
+    post:
+      tags:
+        - user
+      description: Update password (Admin or Owner user)
+      operationId: update-password
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the user to update password
+      requestBody:
+        description: Password Information
+        content:
+          application/json:
+            schema:
+               type: object
+               properties:
+                oldPassword:
+                 type: string
+                 example: "12345678"
+                password:
+                 type: string
+                 example: "123456789"
+                confirmPassword:
+                 type: string
+                 example: "123456789"
+        required: true
+      responses:
+        '200':
+          description: Password updated successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: "Password updated successfully"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+             
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'       
    /users:
     get:
       tags:
         - user
-      description: Get all user
+      description: Get all user (Admin only)
       operationId: all-user
+      security:
+        - BearerAuth: []
       responses:
         '200':
           description: Get all user successfully
@@ -160,11 +476,183 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
+   /users/{userId}:
+    get: 
+      tags:
+        - user
+      description: Get details user(Admin or owner account)
+      operationId: details user
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the user to get information
+      responses:
+        '200':
+          description: Get details user successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/User'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /users/update/{userId}:
+    put:
+      tags:
+        - user
+      description: Update user(Admin or owner account)
+      operationId: update-user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the user to get information
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: User Information
+        content:
+          application/json:
+            schema:
+               type: object
+               properties:
+                username:
+                 type: string
+                 example: "dinomanh"
+                fullname:
+                 type: string
+                 example: "Nguyễn Viết Mạnh"
+                email:
+                 type: string
+                 example: "dinomanh123@gmail.com"
+                phone: 
+                 type: string
+                 example: "0876020132"
+                address: 
+                 type: string
+                 example: "134 Trương Định,Hai Bà Trưng, Hà Nội"
+        required: true
+      responses:
+        '200':
+          description: Updated user successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Updated user successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /users/delete/{userId}:
+    delete:
+      tags:
+        - user
+      description: Delete user (Admin only)
+      operationId: delete-order
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the user to delete
+      responses:
+        '200':
+          description: User deleted successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Order deleted successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
    /categories:
     get:
       tags:
         - category
-      description: Get all category
+      description: Get all category 
       operationId:  all-cate
       responses:
         '200':
@@ -201,59 +689,14 @@ paths:
            application/json:
             schema:
               $ref: '#/components/schemas/ValidateResponse'
-   /categories/{categoryId}:
-    get:
-      tags:
-        - category
-      description: Get detais category
-      operationId: detail-cate
-      parameters:
-        - in: path
-          name: categoryId  
-          required: true
-          schema:
-            type: integer
-            minimum: 1
-          description: The Id of the category to get information
-      responses:
-        '200':
-          description: Get details category successfully
-          content:
-           application/json:
-            schema:
-               type: object
-               properties:
-                success:
-                 type: string
-                 example: true
-                data:
-                 type: object
-                 $ref: '#/components/schemas/Category'
-                status:
-                 type: integer
-                 example: 200
-                message:
-                 type: string
-                 example: "ok"
-                
-        '404':
-          description: Not Found
-          content:
-           application/json:
-            schema:
-              $ref: '#/components/schemas/ErrorResponse'
-        '422':
-          description: Error Validate
-          content:
-           application/json:
-            schema:
-              $ref: '#/components/schemas/ValidateResponse'    
    /categories/create:
     post:
       tags:
         - category
-      description: Creates a new category with the provided name.
+      description: Creates a new category (Admin Only)
       operationId: create-cate
+      security:
+        - BearerAuth: []
       requestBody:
         description: The name of the new category.
         required: true
@@ -302,8 +745,10 @@ paths:
     put:
       tags:
         - category
-      description: Updates the details of a category identified by categoryId.
+      description: Update category (Admin only)
       operationId: update-cate
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: categoryId  
@@ -360,8 +805,10 @@ paths:
     delete:
       tags:
         - category
-      description: Deletes a category identified by categoryId
+      description: Delete category (Admin only)
       operationId: delete-cate
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: categoryId  
@@ -566,23 +1013,49 @@ paths:
     post:
       tags:
         - product
-      description: Create a new product.
+      description: Create a new product (Admin only)
       operationId: create-product
+      security:
+        - BearerAuth: []
       requestBody:
         description: Product Information
         required: true
         content:
-          application/json:
+         multipart/form-data:
             schema:
-             type: object
-             allOf:
-              - type: object
-                properties:
-                  categoryId:
-                    type: integer
-                    format: int64
-                    example: 1
-              - $ref: "#/components/schemas/BaseProduct"
+              type: object
+              properties:
+                categoryId:
+                  type: integer
+                  example: 1
+            
+                name:
+                  type: string
+                  example: "Ultraboost - White/Black"
+                description:
+                  type: string
+                  example: "Inspired by the original low-profile tennis shoe, the Nike Killshot 2 updates the upper with a variety of textured leathers to create a fresh look. From soft suedes to smooth leathers with the perfect sheen, it's court-side attitude with a modern touch."
+                seller:
+                  type: string
+                  example: "Adidas"
+                price:
+                  type: number
+                  format: float
+                  example: 112.34
+                stock:
+                  type: integer
+                  example: 12
+                img:
+                  type: string
+                  format: binary
+              required:
+                - categoryId
+                - name
+                - description
+                - seller
+                - price
+                - stock
+                - img
             
                  
       responses:
@@ -622,8 +1095,10 @@ paths:
     put:
       tags:
         - product
-      description: Update product.
+      description: Update product (Admin only)
       operationId: update-product
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: productId  
@@ -636,19 +1111,44 @@ paths:
         description: Product Information
         required: true
         content:
-          application/json:
+         multipart/form-data:
             schema:
-             type: object
-             allOf:
-              - type: object
-                properties:
-                  categoryId:
-                    type: integer
-                    format: int64
-                    example: 1
-              - $ref: "#/components/schemas/BaseProduct"
-            
+              type: object
+              properties:
+                categoryId:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "Ultraboost - White/Black"
+                description:
+                  type: string
+                  example: "Inspired by the original low-profile tennis shoe, the Nike Killshot 2 updates the upper with a variety of textured leathers to create a fresh look. From soft suedes to smooth leathers with the perfect sheen, it's court-side attitude with a modern touch."
+                seller:
+                  type: string
+                  example: "Adidas"
                  
+                price:
+                  type: number
+                  format: float
+                  example: 112.34
+                
+                stock:
+                  type: integer
+                  example: 12
+                 
+                img:
+                  type: string
+                  format: binary
+       
+              required:
+                - categoryId
+                - name
+                - description
+                - seller
+                - price
+                - stock
+                - img  
       responses:
         '200':
           description: Post updated successfully
@@ -686,8 +1186,10 @@ paths:
     delete:
       tags:
         - product
-      description: Delete product.
+      description: Delete product  (Admin only)
       operationId: delete-product
+      security:
+        - BearerAuth: []
       parameters:
         - in: path
           name: productId  
@@ -711,6 +1213,406 @@ paths:
                 data:
                  type: string
                  example: "Post deleted successfully"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /orders:
+    get:
+      tags:
+        - order
+      description: Get all order (Admin or Owner user)
+      operationId:  all-order
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Get all order successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/Order'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /carts:
+    get:
+      tags:
+        - cart
+      description: Get all product in shopping cart (Admin or Owner user)
+      security:
+        - BearerAuth: []
+      operationId:  all-cart
+      responses:
+        '200':
+          description: Get all product in shopping cart successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/Cart'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /carts/add/{productId}:
+    post:
+      tags:
+        - cart
+      description: Add product to shopping cart (Admin or Owner user)
+      operationId: add-product-cart
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: productId  
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of product add to shopping cart
+        - in: query
+          name: quantity
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: Quantity of the product added
+      responses:
+        '200':
+          description: Add product to shopping cart successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Add product to shopping cart successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'    
+   /carts/delete/{productId}:
+    delete:
+      tags:
+        - cart
+      description: Delete a produt in shopping cart (Admin or Owner user)
+      operationId: delete-product-cart
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: productId  
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of product add to shopping cart
+      responses:
+        '200':
+          description: Product in shopping cart deleted successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Product in shopping cart deleted successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /orders/{orderId}:
+    get:
+      tags:
+        - order
+      description: Get details of order (Admin or Owner user)
+      operationId:  details-order
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the order to get information
+      responses:
+        '200':
+          description: Get details order successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: array
+                 items:
+                    type: object
+                    $ref: '#/components/schemas/DetailsOrder'
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /orders/create:
+    post:
+      tags:
+        - order
+      description: Create a new order (Admin or User)
+      operationId: create-order
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Order Information
+        required: true
+        content:
+          application/json:
+            schema:
+             type: object
+             $ref: "#/components/schemas/BaseOrder"
+            
+                 
+      responses:
+        '200':
+          description: Post created successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: "Post created successfully"
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /orders/update/{orderId}:
+    put:
+      tags:
+        - order
+      description: Updates the status of the order (Admin Only)
+      operationId: update-order
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: orderId  
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            example: 4
+          description: The Id of the order to update
+        - in: query
+          name: status
+          required: true
+          schema:
+            type: string
+            minimum: 1
+            example: shipping
+          description: status of the order
+      responses:
+        '200':
+          description: Order updated successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Order updated successfully
+                status:
+                 type: integer
+                 example: 200
+                message:
+                 type: string
+                 example: "ok"
+                
+        '404':
+          description: Not Found
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Error Validate
+          content:
+           application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateResponse'
+   /orders/delete/{orderId}:
+    delete:
+      tags:
+        - order
+      description: Delete order (Admn or Owner user)
+      operationId: order-delete
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: orderId
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+          description: The Id of the order to delete
+      responses:
+        '200':
+          description: Order deleted successfully
+          content:
+           application/json:
+            schema:
+               type: object
+               properties:
+                success:
+                 type: string
+                 example: true
+                data:
+                 type: string
+                 example: Order deleted successfully
                 status:
                  type: integer
                  example: 200

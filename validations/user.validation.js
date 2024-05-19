@@ -21,3 +21,4 @@ module.exports = {
   phone: Joi.string().required(),
   address: Joi.string().required(),
 };
+

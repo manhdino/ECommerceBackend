@@ -6,3 +6,4 @@ module.exports = {
   amount: Joi.number().required().required(),
   status: Joi.string().required().max(10),
 };
+

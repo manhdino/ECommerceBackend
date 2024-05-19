@@ -1,14 +1,15 @@
 const model = require("../database/models");
-const { Op } = require("sequelize");
+const cloudinary = require("cloudinary").v2;
 module.exports = {
   index: async () => {
     try {
       const response = await model.Product.findAll({
-        attributes: { exclude: ["category_id"] },
+        attributes: { exclude: ["category_id", "created_at", "updated_at"] },
         include: [
           {
             model: model.Category,
             as: "category",
+            attributes: ["name"],
           },
         ],
       });
@@ -22,7 +23,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -51,7 +52,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -83,15 +84,19 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
-  create: async (data) => {
+  create: async (data, file) => {
     try {
       const { categoryId, ...productInfo } = data;
+      const { path, filename } = file;
       const checkCategory = await model.Category.findByPk(categoryId);
       if (!checkCategory) {
+        if (file) {
+          cloudinary.uploader.destroy(filename);
+        }
         return {
           error: "Category not found",
         };
@@ -102,33 +107,48 @@ module.exports = {
         },
         defaults: {
           category_id: categoryId,
+          img: path,
           ...productInfo,
           created_at: new Date(),
           updated_at: new Date(),
         },
       });
+      if (created) {
+        return {
+          data: "Product created successfully",
+        };
+      }
+      if (file) {
+        cloudinary.uploader.destroy(filename);
+      }
       return {
-        data: created
-          ? "Product created sucessfully"
-          : "Failed to create product",
+        error: "Failed to create a new product",
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
 
-  update: async (data) => {
+  update: async (data, file) => {
     try {
       const { categoryId, productId, ...productInfo } = data;
+      const { path, filename } = file;
+      console.log(filename);
       const checkProduct = await model.Product.findByPk(productId);
       if (!checkProduct) {
+        if (file) {
+          cloudinary.uploader.destroy(filename);
+        }
         return {
           error: "Product not found",
         };
       }
       if (checkProduct.name == productInfo.name) {
+        if (file) {
+          cloudinary.uploader.destroy(filename);
+        }
         return {
           error: "Name of product has been already used",
         };
@@ -137,6 +157,9 @@ module.exports = {
       if (categoryId) {
         const checkCategory = await model.Category.findByPk(categoryId);
         if (!checkCategory) {
+          if (file) {
+            cloudinary.uploader.destroy(filename);
+          }
           return {
             error: "Category not found",
           };
@@ -146,6 +169,7 @@ module.exports = {
       const response = await model.Product.update(
         {
           category_id: categoryId,
+          img: path,
           ...productInfo,
           updated_at: new Date(),
         },
@@ -155,15 +179,20 @@ module.exports = {
           },
         }
       );
+      if (response == 1) {
+        return {
+          data: "Product updated successfully",
+        };
+      }
+      if (file) {
+        cloudinary.uploader.destroy(filename);
+      }
       return {
-        data:
-          response == 1
-            ? "Product updated successfully"
-            : "Failed to update product",
+        error: "Failed to update product",
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },
@@ -189,7 +218,7 @@ module.exports = {
       };
     } catch (error) {
       return {
-        error: error.message,
+        error: error.errors[0].message,
       };
     }
   },

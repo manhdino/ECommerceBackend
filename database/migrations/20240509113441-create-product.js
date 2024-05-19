@@ -33,18 +33,17 @@ module.exports = {
         type: Sequelize.STRING(20),
         allowNull: false,
       },
+      quantity: {
+        type: Sequelize.INTEGER,
+        defaultValue: 1,
+      },
       price: {
         type: Sequelize.DECIMAL(10, 2),
         allowNull: false,
       },
-      quantity: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        defaultValue: 1,
-      },
       ratings: {
         type: Sequelize.INTEGER,
-        allowNull: false,
+        defaultValue: 0,
       },
       stock: {
         type: Sequelize.INTEGER,
