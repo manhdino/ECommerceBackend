@@ -104,7 +104,9 @@ module.exports = {
       res.redirect("http://localhost:5173/error");
     } else {
       res
-        .cookie("resetPasswordToken", token)
+        .cookie("resetPasswordToken", token, {
+          httpOnly: true,
+        })
         .redirect("http://localhost:5173/reset-password");
     }
   },
