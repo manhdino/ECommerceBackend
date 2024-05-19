@@ -127,4 +127,13 @@ module.exports = {
       return rs.error(res, err.message);
     }
   },
+  testCookie: (req, res) => {
+    res.cookie("test", "oke", {
+      secure: false,
+      sameSite: 'None'
+    });
+    res.status(200).send({
+      message: "test cookies"
+    })
+  }
 };
