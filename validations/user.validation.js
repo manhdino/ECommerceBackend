@@ -8,6 +8,7 @@ module.exports = {
         "Email is not a valid pattern example214@gmail.com",
     })
     .required(),
+  oldPassword: Joi.string().min(8).required(),
   password: Joi.string().min(8).required(),
   confirmPassword: Joi.string()
     .valid(Joi.ref("password"))
@@ -15,10 +16,8 @@ module.exports = {
       "any.only": "Password and confirm password do not match",
     })
     .required(),
-  phone: Joi.string()
-    .pattern(/^\d{10}$/)
-    .messages({
-      "string.pattern.base": "Phone number must be 10 digits",
-    })
-    .required(),
+  username: Joi.string().max(50).required(),
+  fullname: Joi.string().max(100).required(),
+  phone: Joi.string().required(),
+  address: Joi.string().required(),
 };
