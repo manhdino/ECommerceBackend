@@ -5,8 +5,9 @@ module.exports = {
   index: async () => {
     try {
       const response = await model.User.findAll({
-        attributes: { exclude: ["password"] },
-      });
+        attributes: { exclude: ["password"] }},
+        {where: {role: "user"}}
+      );
       if (response) {
         return {
           data: response,
@@ -23,7 +24,10 @@ module.exports = {
   },
   show: async (userId) => {
     try {
-      const response = await model.User.findByPk(userId);
+      const response = await model.User.findByPk(userId, {
+        attributes: {
+           exclude: ['password']
+        }});
       if (!response) {
         return {
           error: "User not found",
@@ -39,6 +43,7 @@ module.exports = {
     }
   },
   update: async (data, userId) => {
+
     try {
       const { username, fullname, email, address, phone } = data;
       const checkUser = await model.User.findByPk(userId);

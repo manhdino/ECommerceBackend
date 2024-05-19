@@ -9,3 +9,4 @@ router.put("/update/:userId", [auth], userController.update);
 router.post("/update-password/:userId", auth, userController.updatePassword);
 router.delete("/delete/:userId", [auth, admin], userController.destroy);
 module.exports = router;
+

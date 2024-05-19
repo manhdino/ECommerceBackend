@@ -123,4 +123,6 @@ module.exports = {
       return rs.error(res, err.message);
     }
   },
+
 };
+

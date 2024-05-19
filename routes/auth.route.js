@@ -13,4 +13,6 @@ router.post("/reset-password", authController.resetPassword);
 router.get("/google", googleController.redirectAuth);
 router.post("/google/get-infor", googleController.getInforFromGoogle);
 router.post("/refresh-token", authController.refreshToken);
+
 module.exports = router;
+
