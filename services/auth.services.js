@@ -1,389 +1,278 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+const model = require("../database/models");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const { emailContent, sendMail } = require("./mail.services");
 const rs = require("../helpers/error");
-const db = require('../database/models');
-const {sendMail, emailContent} = require('./mail.services');
-
-// const { phone } = require('../validations/auth.validation');
-const User = db.User;
-
-// const hashPassword = async (password) => {
-//     console.log(password);
-//     return bcrypt.hash(password, 10);
-// }
 const generateToken = async (userId, role, time) => {
-    try{
-        const payload = { userId: userId, role: role};
-        const token =  jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: time });
-        return {
-            token
-        }
-    }
-    catch(err) {
-        return {
-            error: err
-        }
-    }
-}
-
-const verifyToken = (token) => {
+  try {
+    const payload = { userId: userId, role: role };
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+      expiresIn: time,
+    });
+    return {
+      token,
+    };
+  } catch (err) {
+    return {
+      error: err,
+    };
+  }
+};
+module.exports = {
+  signIn: async (data) => {
     try {
-        return jwt.verify(token, process.env.JWT_SECRET_KEY)
-            // (err, decoded) => {
-            //     if (err) return ({
-            //         success: false,
-            //         message: 'Invalid token'
-            //     })
-            //     // if (err != null) throw err;
-            //     return decoded.payload;
-            // }
-    } catch (err) {
-        // console.log("[JWT] Error getting JWT token:", err.message)
-        return{
-          error: err
-        } ;
-    }
-}
-
-const signIn = async (data) => {
-    try {
-        const { email, password } = data;
-        const checkUser = await User.findOne({
-          where: {
-            email: email,
-          },
-        });
-        if (!checkUser) {
-          return {
-            error: "Email not found",
-          };
-        }
-        if (checkUser.googleId) {
-          return {
-            error: "This email is registered as a Google account."
-          }
-        }
+      const { email, password } = data;
+      const checkUser = await model.User.findOne({
+        where: {
+          email: email,
+        },
+      });
+      if (!checkUser) {
+        return {
+          error: "Email not found",
+        };
+      }
+      if (!checkUser.google_id) {
         const isPasswordValid = await bcrypt.compare(
           password,
           checkUser.password
         );
-  
+
         if (!isPasswordValid) {
           return {
             error: "Invalid password",
           };
         }
-        let refreshToken = checkUser.refreshToken;
-        // let checkVerify;
-        // if (refreshToken != null) {
-        //   checkVerify = verifyToken(refreshToken);
-        // }
-        // if (refreshToken === null || checkVerify.error) {
-        refreshToken = await generateToken(checkUser.id, checkUser.role, "7d");
-          await User.update({
-              refreshToken: refreshToken.token
-          }, {where: {id: checkUser.id}})
-          console.log('tao refresh token thanh cong')
-        // }
-        const access_token = jwt.sign(
-          { userId: checkUser.id, role: checkUser.role },
-          process.env.JWT_SECRET_KEY,
-          {
-            expiresIn: "1d",
-          }
-        );
-        return {
-          data: {
-            user: {
-              id: checkUser.id,
-              username: checkUser.username,
-              email: checkUser.email,
-              fullname: checkUser.fullname,
-              role: checkUser.role,
-              phone: checkUser.phone,
-              address: checkUser.address,
-              created_at: checkUser.created_at,
-              updated_at: checkUser.updated_at,
-            },
-            refreshToken: refreshToken,
-            access_token: access_token,
-          },
-        };
-      } catch (error) {
-        return {
-          error: error.message,
-        };
       }
-}
+      const accessToken = await generateToken(
+        checkUser.id,
+        checkUser.role,
+        "1h"
+      );
+      const refreshToken = await generateToken(
+        checkUser.id,
+        checkUser.role,
+        "7h"
+      );
 
-const signUp = async (data) => {
-    try {
-        const checkUser = await User.findOne({
+      await model.User.update(
+        {
+          refresh_token: refreshToken.token,
+        },
+        {
           where: {
-            email: data.email,
+            id: checkUser.id,
           },
-        });
-        if (checkUser) {
-          return {
-            error: "Email is already in used",
-          };
         }
-        const newUser = await User.create({
-          email: data.email,
-          password: data.password,
-          username: data.email,
-          phone: data.phone,
-          fullname: data.fullname,
-          address: data.address,
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-        return {
-          data: {
-            id: newUser.id,
-            username: newUser.username,
-            email: newUser.email,
-            fullname: newUser.fullname,
-            role: newUser.role,
-            phone: newUser.phone,
-            address: newUser.address,
-            created_at: newUser.created_at,
-            updated_at: newUser.updated_at,
-          },
-        };
-      } catch (error) {
-        return {
-          error: error.message,
-        };
-      }
-}
+      );
 
-const signOut = async (userId) => {
-  try {
-    const user = await User.findOne({where: {id: userId}});
-    user.refreshToken = null;
-    await user.save();
-    return {
-      success: true
-    }
-  }
-  catch(err) {
-    return {
-      error: err
-    }
-  }
-}
-
-const refreshToken = async (refreshToken) => {
-    try {
-        const checkVerify = await verifyToken(refreshToken)
-        console.log(checkVerify)
-        if (checkVerify.userId) {
-            const response = await User.findOne({id: checkVerify.id, refreshToken: refreshToken})
-            if (response) {
-              return ({
-                accessToken: jwt.sign({userId: checkVerify.userId, role: checkVerify.role}, process.env.JWT_SECRET_KEY, { expiresIn: '5m' })
-              })
-            }
-            else {
-              return {
-                error: "loi"
-              }
-            }
-        }
-        if (checkVerify.error) {
-          return ({
-            error: "refresh token is expired"
-          })
-        }
-    } catch (err) {
-        return ({
-            error: err.message,
-        });
-    }
-}
-
-// const changePassword = async (userId, oldPassword, newPassword) => {
-//   try {
-//     const user = await User.findOne({
-//       where: {
-//         id: userId,
-//       }
-//     })
-//     if (!user) {
-//       return {
-//         error: "User not found!"
-//       }
-//     }
-//     if (user.googleId) {
-//       return {
-//         error: "This email is registed as Google account."
-//       }
-//     }
-//     const isPasswordValid = await bcrypt.compare(
-//       oldPassword,
-//       user.password
-//     );
-//     if (!isPasswordValid) {
-//       return {
-//         error: "password is invalid"
-//       }
-//     }
-//     user.password = newPassword;
-//     await user.save();
-//     return {
-//       message: "changed password successfully"
-//     }
-//   }
-//   catch(err) {
-//     return {
-//       error: err
-//     }
-//   }
-// }
-
-const resetPassword = async (token, newPassword) => {
-  const payload = await verifyToken(token);
-  console.log(payload)
-  if (payload.error) {
-    return {
-      error: "reset password code is expired"
-    }
-  }
-  try {
-    const user = await User.findOne({
-      where: {
-        id: payload.userId
-      }
-    })
-    if (!user) {
+      const user = await model.User.findOne({
+        where: {
+          id: checkUser.id,
+        },
+        attributes: { exclude: ["password", "refresh_token"] },
+      });
       return {
-        error: "Email not found"
+        data: user,
+        access_token: accessToken.token,
+        refresh_token: refreshToken.token,
+      };
+    } catch (error) {
+      return {
+        error: error.errors[0].message,
       };
     }
-    // if (user.googleId) {
-    //   return {
-    //     error: "This email is registered as a Google account."
-    //   }
-    // }
-    if (payload.code != user.passwordCode) {
-      return {
-        error: "Unauthorized!"
+  },
+  signUp: async (data) => {
+    try {
+      const { email, password, username } = data;
+      const checkUser = await model.User.findOne({
+        where: {
+          email: email,
+        },
+      });
+      if (checkUser) {
+        return {
+          error: "Email is already in used",
+        };
       }
-    }
-    user.password = newPassword;
-    user.passwordCode = null;
-    await user.save();
-    return {
-      data: "password updated"
-    }
-  }
-  catch (err) {
-    return {
-      error: "invalid"
-    }
-  }
-}
+      const newUser = await model.User.create({
+        username: username,
+        email: email,
+        password: password,
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+      const accessToken = await generateToken(newUser.id, newUser.role, "1h");
+      const refreshToken = await generateToken(newUser.id, newUser.role, "7h");
+      newUser.refresh_token = refreshToken.token;
+      await newUser.save();
 
-const forgotPassword = async (email, host, protocol) => {
-  try {
-    const user = await User.findOne({
-      where: {email: email}
-    })
-    if (!user) {
+      const user = await model.User.findOne({
+        where: {
+          id: newUser.id,
+        },
+        attributes: { exclude: ["password", "refresh_token"] },
+      });
       return {
-        error: "Email not found"
-      }
-    }
-    if (user.googleId) {
+        data: user,
+        access_token: accessToken.token,
+        refresh_token: refreshToken.token,
+      };
+    } catch (error) {
       return {
-        error: "This email is registered as a Google account."
-      }
+        error: error.errors[0].message,
+      };
     }
-    // const code = crypto.randomInt(100000, 1000000);
-    const code = 111111;
-    user.passwordCode = code;
-    await user.save();
-    const token = jwt.sign({userId : user.id, role: user.role, code: code}, process.env.JWT_SECRET_KEY, {expiresIn: '1d'});
-    const resetLink = `${protocol}://${host}/api/auth/verify-link?token=${token}&email=${email}`;
-    const html = emailContent(user.fullname, host, resetLink);
-    const response = await sendMail(email, html);
-    if (response.error) {
-      return {
-        error: response.error
-      }
-    }
-    return {
-      data: response.info
-    }
-  }
-  catch(err) {
-    return {
-      error: err
-    }
-  }
-}
+  },
 
-const verifyLink = async (email, token) => {
-  try {
-    let decoded = verifyToken(token);
-    if (decoded.error) {
-      return {
-        error: "Invalid Link"
+  resetPassword: async (token, data) => {
+    try {
+      const { password } = data;
+      let userInfo = null;
+      jwt.verify(token, process.env.JWT_SECRET_KEY, (error, res) => {
+        if (error) {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+        if (res) {
+          userInfo = res;
+        } else {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+      });
+      const checkUser = await model.User.findOne({
+        where: {
+          id: userInfo.userId,
+        },
+      });
+      if (userInfo.passwordCode != checkUser.password_code) {
       }
-    }
-    const user = await User.findOne({where: {
-      id: decoded.userId
-    }})
-    if (user.passwordCode != decoded.code) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      checkUser.password = hashedPassword;
+      await checkUser.save();
       return {
-        error: "invalid Link"
+        data: "Password reset successfully",
+      };
+    } catch (error) {
+      return {
+        error: error.errors[0].message,
+      };
+    }
+  },
+
+  forgotPassword: async (email, host, protocol) => {
+    try {
+      const checkUser = await model.User.findOne({
+        where: { email: email },
+      });
+      if (!checkUser) {
+        return {
+          error: "Email not found",
+        };
       }
+      const passwordCode = Math.floor(Math.random() * 1000000) + 1000000;
+      checkUser.password_code = passwordCode;
+      await checkUser.save();
+      const token = jwt.sign(
+        { userId: checkUser.id, passwordCode: passwordCode },
+        process.env.JWT_SECRET_KEY,
+        { expiresIn: "5h" }
+      );
+      const resetLink = `${protocol}://${host}/api/auth/verify-link?token=${token}`;
+      const html = emailContent(checkUser.username, resetLink);
+      const response = await sendMail(email, html);
+      if (response.error) {
+        return {
+          error: response.error,
+        };
+      }
+      return {
+        data: response.info,
+      };
+    } catch (error) {
+      return {
+        error: error.errors[0].message,
+      };
     }
-    return {
-      data: "Valid Link"
-    }
-  }
-  catch(err) {
-    return {
-      error: err
-    }
-  }
-}
+  },
 
-// const getUserById = async (id) => {
-//   try {
-//     const user = await User.findByPk(id, {
-//       attributes: {
-//         exclude: ['password']
-//       }
-//     });
-//     if (!user) {
-//       return {
-//         error: "User not found"
-//       }
-//     }
-//     return {
-//       data: user
-//     }
-//   }
-//   catch (err) {
-//     return {
-//       error: err
-//     }
-//   }
-// }
+  verifyLink: async (token) => {
+    try {
+      let userInfo = null;
+      jwt.verify(token, process.env.JWT_SECRET_KEY, (error, res) => {
+        if (error) {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+        if (res.userId) {
+          userInfo = res;
+        } else {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+      });
 
-module.exports = {
-    generateToken,
-    verifyToken,
-    refreshToken,
-    signIn,
-    signUp,
-    signOut,
-    // changePassword,
-    forgotPassword,
-    verifyLink,
-    resetPassword,
-}
+      if (!userInfo) {
+        return {
+          error: "Unauthorized!",
+        };
+      }
+      const checkUser = await model.User.findOne({
+        where: {
+          id: userInfo.userId,
+        },
+      });
+      if (checkUser.password_code != userInfo.passwordCode) {
+        return {
+          error: "Unauthorized!",
+        };
+      }
+
+      return {
+        data: token,
+      };
+    } catch (error) {
+      return {
+        error: error.errors[0].message,
+      };
+    }
+  },
+
+  refreshToken: async (refreshToken) => {
+    try {
+      let userInfo = null;
+      jwt.verify(refreshToken, process.env.JWT_SECRET_KEY, (error, user) => {
+        if (error) {
+          return rs.unauthorized(res, "Refresh token is expired");
+        }
+        if (user.userId) {
+          userInfo = user;
+        } else {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+      });
+      const checkUser = await model.User.findOne({
+        where: {
+          id: userInfo.userId,
+        },
+      });
+      if (checkUser) {
+        return {
+          data: {
+            access_token: (
+              await generateToken(checkUser.id, checkUser.role, "1h")
+            ).token,
+            refresh_token: (
+              await generateToken(checkUser.id, checkUser.role, "7d")
+            ).token,
+          },
+        };
+      }
+      return {
+        error: "User not found",
+      };
+    } catch (error) {
+      return {
+        error: error.errors[0].message,
+      };
+    }
+  },
+};

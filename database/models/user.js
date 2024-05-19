@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       User.hasMany(models.Order, {
         onDelete: "CASCADE",
-        foreignKey: "ordered_by",
+        foreignKey: "user_id",
         as: "orders",
       });
       User.hasMany(models.Cart, {
@@ -23,15 +23,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       fullname: {
         type: DataTypes.STRING(50),
-        allowNull: false,
       },
       email: {
         type: DataTypes.STRING(30),
         unique: true,
         allowNull: false,
-      },
-      avatar: {
-        type: DataTypes.TEXT
       },
       role: {
         type: DataTypes.STRING(10),
@@ -40,23 +36,28 @@ module.exports = (sequelize, DataTypes) => {
       },
       phone: {
         type: DataTypes.STRING(20),
-        allowNull: false,
       },
       password: {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      password_code: {
+        type: DataTypes.STRING,
+      },
+      picture: {
+        type: DataTypes.STRING,
+        defaultValue: "https://i.ibb.co/tBDhxh6/avatar.png",
+      },
       address: {
         type: DataTypes.TEXT,
-        allowNull: false,
       },
-      refreshToken: {
-        type: DataTypes.STRING
+      refresh_token: {
+        type: DataTypes.STRING,
       },
-      googleId: {
-        type: DataTypes.STRING
+      google_id: {
+        type: DataTypes.STRING,
+        defaultValue: null,
       },
-      passwordCode: DataTypes.STRING,
       created_at: {
         allowNull: false,
         type: DataTypes.DATE,

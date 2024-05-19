@@ -1,111 +1,139 @@
-const jwt = require('jsonwebtoken')
-// const {verifyToken, generateToken} = require('./auth.services')
-const db = require('../database/models');
-const { where } = require('sequelize');
-const User = db.User
+const jwt = require("jsonwebtoken");
+const model = require("../database/models");
+const { OAuth2Client } = require("google-auth-library");
+const fetch = require("node-fetch");
 
-const { OAuth2Client } = require('google-auth-library');
+const oAuth2client = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  // "https://ecommercebackend-953d.up.railway.app/api/auth/google/callback"
+  "http://localhost:5173/get-infor"
+);
 
-const oAuth2client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, process.env.REDIRECT_URI);
-const getGoogleAuthUrl = async () => {
-  const scopes = ['profile', 'email'];
-  const url = oAuth2client.generateAuthUrl({
-    access_type: 'offline',
-    scope: scopes,
-    prompt: 'consent'
-  });
-  return url;
-}
-
-const getUserInfor = async (accesToken) => {
-  const userInfoEndpoint = 'https://www.googleapis.com/oauth2/v3/userinfo';
-  const response = await fetch(userInfoEndpoint, {
-    headers: {
-      'Authorization': `Bearer ${accesToken}`
-    }
-  });
-  const userInfor = await response.json();
-  return userInfor;
-}
-
-const findOrCreateUser = async (userInfor) => {
-  try {
-      const checkUser = await User.findOne({where: {email: userInfor.email}});
-      if (checkUser && checkUser.googleId == null) {
-        console.log('da dang ky')
-        return {error: "This email is already registered."}
-      }
-      const googleId = userInfor.sub;
-      const foundUser = await User.findOne({where: {googleId: googleId}});
-      if (foundUser) {
-          payload = {userId: foundUser.id, role: foundUser.role};
-          const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {expiresIn: "7d"});
-          const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
-          await User.update(
-            {refreshToken : refreshToken }, { where : {googleId: googleId} }
-          )
-          return {
-            data: foundUser,
-            refreshToken: refreshToken,
-            accesToken: accessToken
-          }
-      }
-      else {
-        const fullname = userInfor.name;
-        const email = userInfor.email;
-        const username = email;
-        const avatar = userInfor.picture;
-        const _user = await User.create({
-          fullname: fullname,
-          email: email,
-          username: username,
-          googleId: googleId,
-          password: "/0",
-          phone: "/0",
-          avatar: avatar,
-          address: "/0",
-          role: "user",
-          created_at: new Date(),
-          updated_at: new Date(),
-        })
-        console.log(_user.id)
-        payload = {userId: _user.id, role: _user.role};
-        const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {expiresIn: "7d"});
-        const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d" });
-        _user.refreshToken = refreshToken;
-        await _user.save();
-        // console.log('hello')
-        const data =  {
-          fullname: fullname,
-          email: email,
-          username: username,
-          avatar: avatar,
-          password: "/0",
-          phone: "/0",
-          address: "/0",
-          role: "user",
-          created_at: new Date(),
-          updated_at: new Date(),    
-        }
-        return {
-          data: {
-            user: data,
-            refreshToken: refreshToken,
-            access_token: accessToken
-          }
-        }
-      }
-  }
-  catch(err) {
-    return {
-      error: err
-    }
-  }
-}
+const scopes = [
+  "https://www.googleapis.com/auth/userinfo.profile",
+  "https://www.googleapis.com/auth/userinfo.email",
+];
 
 module.exports = {
-  getGoogleAuthUrl,
-  getUserInfor,
-  findOrCreateUser,
-  oAuth2client
-}
+  oAuth2client,
+
+  getGoogleAuthUrl: async () => {
+    const url = oAuth2client.generateAuthUrl({
+      access_type: "offline",
+      scope: scopes,
+      prompt: "consent",
+    });
+    return url;
+  },
+
+  getUserInfo: async (accessToken) => {
+    const userInfoEndpoint = "https://www.googleapis.com/oauth2/v3/userinfo";
+    try {
+      const response = await fetch(userInfoEndpoint, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error fetching user info: ${response.statusText}`);
+      }
+
+      const userInfo = await response.json();
+      return userInfo;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  findOrCreateUser: async (userInfo) => {
+    try {
+      const { sub, email, picture } = userInfo;
+      const googleId = sub;
+
+      const checkUser = await model.User.findOne({
+        where: { email: userInfo.email },
+      });
+      if (checkUser && checkUser.google_id == googleId) {
+        const payload = { userId: checkUser.id, role: checkUser.role };
+        const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "7d",
+        });
+        const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "1d",
+        });
+        await model.User.update(
+          { refresh_token: refreshToken },
+          { where: { google_id: checkUser.google_id } }
+        );
+        return {
+          data: {
+            user: checkUser,
+            refreshToken: refreshToken,
+            accessToken: accessToken,
+          },
+        };
+      }
+      else if (checkUser && checkUser.google_id != googleId) {
+        return {error: "email đã được đăng ký như tài khoản thường."}
+      }
+
+      if (!checkUser) {
+        const createdUser = await model.User.create({
+          email: email,
+          username: email,
+          google_id: googleId,
+          picture: picture,
+          password: "/0",
+          phone: "/0",
+          picture: picture,
+          created_at: new Date(),
+          updated_at: new Date(),
+        });
+
+        payload = { userId: createdUser.id, role: createdUser.role };
+        refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "7d",
+        });
+        accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "1d",
+        });
+
+        createdUser.refresh_token = refreshToken;
+        await createdUser.save();
+        return {
+          data: {
+            user: createdUser,
+            refreshToken: refreshToken,
+            accessToken: accessToken,
+          },
+        };
+      } 
+      else {
+        const payload = { userId: checkUser.id, role: checkUser.role };
+        const refreshToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "7d",
+        });
+        const accessToken = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+          expiresIn: "1d",
+        });
+        await model.User.update(
+          { refresh_token: refreshToken, google_id: googleId },
+          { where: { id: checkUser.id } }
+        );
+        return {
+          data: {
+            user: checkUser,
+            refreshToken: refreshToken,
+            accessToken: accessToken,
+          },
+        };
+      }
+    } catch (err) {
+      return {
+        error: err.message,
+      };
+    }
+  },
+};

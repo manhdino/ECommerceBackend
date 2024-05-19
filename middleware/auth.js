@@ -1,40 +1,31 @@
-//Check Permissions
-const {verifyToken} = require("../services/auth.services");
-const jwt = require('jsonwebtoken')
 const rs = require("../helpers/error");
-
-const auth = async (req, res, next) => {
-    // console.log('hello')
-    const accessToken = req?.headers?.authorization;
-    if (!accessToken) {
-        return rs.error(res, "Access token is required");
-    }
-    try {
-        const infor = verifyToken(accessToken.split(" ")[1]);
-        // const infor = jwt.verify(accessToken.split(" ")[1], process.env.JWT_SECRET_KEY)
-        if (!infor.error) {
-            req.user = infor;
-            return next();
-        }
-        else {
-            return rs.unauthorized(res, "Unauthorized");
-        }
-    }
-    catch(err) {
-        return rs.unauthorized(res, "Unauthorized");
-    }
-}
-
-const admin = async (req, res, next) => {
-    if (req.user.role == "admin") {
-        next;
-    }
-    else {
-        return rs.unauthorized(res, "Unauthorized");
-    }
-}
+const jwt = require("jsonwebtoken");
 
 module.exports = {
-    auth,
-    admin
-}
+  auth: (req, res, next) => {
+    let access_token = req.headers.authorization;
+    if (access_token) {
+      access_token = access_token.split(" ")[1];
+      jwt.verify(access_token, process.env.JWT_SECRET_KEY, (error, user) => {
+        if (error) {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+        if (user) {
+          req.user = user;
+          next();
+        } else {
+          return rs.unauthorized(res, "Unauthorized");
+        }
+      });
+    } else {
+      return rs.error(res, "Access token is required");
+    }
+  },
+  admin: (req, res, next) => {
+    if (req.user.role === "admin") {
+      next();
+    } else {
+      return rs.unauthorized(res, "Unauthorized");
+    }
+  },
+};
