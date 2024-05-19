@@ -105,7 +105,8 @@ module.exports = {
     } else {
       res
         .cookie("resetPasswordToken", token, {
-          httpOnly: true,
+          secure: true,
+          sameSite: 'None'
         })
         .redirect("http://localhost:5173/reset-password");
     }
