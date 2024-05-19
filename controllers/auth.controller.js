@@ -104,10 +104,7 @@ module.exports = {
       res.redirect("http://localhost:5173/error");
     } else {
       res
-        .cookie("resetPasswordToken", token, {
-          secure: false,
-          sameSite: 'None'
-        })
+        .cookie("resetPasswordToken", token)
         .redirect("http://localhost:5173/reset-password");
     }
   },
@@ -127,13 +124,4 @@ module.exports = {
       return rs.error(res, err.message);
     }
   },
-  testCookie: (req, res) => {
-    res.cookie("test", "oke", {
-      secure: false,
-      sameSite: 'None'
-    });
-    res.status(200).send({
-      message: "test cookies"
-    })
-  }
 };
