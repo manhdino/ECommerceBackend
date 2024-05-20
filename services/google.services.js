@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const model = require("../database/models");
 const { OAuth2Client } = require("google-auth-library");
 const fetch = require("node-fetch");
-const { address } = require("../validations/user.validation");
+const { fullname } = require("../validations/user.validation");
 
 const oAuth2client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -73,11 +73,14 @@ module.exports = {
             user: {
               id: checkUser.id,
               username: checkUser.username,
+              fullname: checkUser.fullname,
               email: checkUser.email,
               phone: checkUser.phone,
               picture: checkUser.picture,
               role: checkUser.role,
-              address: checkUser.address
+              address: checkUser.address,
+              created_at: checkUser.created_at,
+              updated_at: checkUser.updated_at
             },
             refreshToken: refreshToken,
             accessToken: accessToken,
@@ -92,6 +95,7 @@ module.exports = {
         const createdUser = await model.User.create({
           email: email,
           username: name,
+          fullname: name,
           google_id: googleId,
           picture: picture,
           password: "/0",
@@ -116,11 +120,14 @@ module.exports = {
             user: {
               id: createdUser.id,
               username: createdUser.username,
+              fullname: createdUser.fullname,
               email: createdUser.email,
               phone: createdUser.phone,
               picture: createdUser.picture,
               role: createdUser.role,
-              address: createdUser.address
+              address: createdUser.address,
+              created_at: createdUser.created_at,
+              updated_at: createdUser.updated_at
             },
             refreshToken: refreshToken,
             accessToken: accessToken,
@@ -144,11 +151,14 @@ module.exports = {
             user: {
               id: checkUser.id,
               username: checkUser.username,
+              fullname: checkUser.fullname,
               email: checkUser.email,
               phone: checkUser.phone,
               picture: checkUser.picture,
               role: checkUser.role,
-              address: checkUser.address
+              address: checkUser.address,
+              created_at: checkUser.created_at,
+              updated_at: checkUser.updated_at
             },
             refreshToken: refreshToken,
             accessToken: accessToken,
