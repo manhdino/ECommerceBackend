@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const model = require("../database/models");
 const { OAuth2Client } = require("google-auth-library");
 const fetch = require("node-fetch");
+const { address } = require("../validations/user.validation");
 
 const oAuth2client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -49,7 +50,7 @@ module.exports = {
 
   findOrCreateUser: async (userInfo) => {
     try {
-      const { sub, email, picture } = userInfo;
+      const { sub, name, email, picture } = userInfo;
       const googleId = sub;
 
       const checkUser = await model.User.findOne({
@@ -69,7 +70,15 @@ module.exports = {
         );
         return {
           data: {
-            user: checkUser,
+            user: {
+              id: checkUser.id,
+              username: checkUser.username,
+              email: checkUser.email,
+              phone: checkUser.phone,
+              picture: checkUser.picture,
+              role: checkUser.role,
+              address: checkUser.address
+            },
             refreshToken: refreshToken,
             accessToken: accessToken,
           },
@@ -82,11 +91,11 @@ module.exports = {
       if (!checkUser) {
         const createdUser = await model.User.create({
           email: email,
-          username: email,
+          username: name,
           google_id: googleId,
           picture: picture,
           password: "/0",
-          phone: "/0",
+          phone: null,
           picture: picture,
           created_at: new Date(),
           updated_at: new Date(),
@@ -104,7 +113,15 @@ module.exports = {
         await createdUser.save();
         return {
           data: {
-            user: createdUser,
+            user: {
+              id: createdUser.id,
+              username: createdUser.username,
+              email: createdUser.email,
+              phone: createdUser.phone,
+              picture: createdUser.picture,
+              role: createdUser.role,
+              address: createdUser.address
+            },
             refreshToken: refreshToken,
             accessToken: accessToken,
           },
@@ -124,7 +141,15 @@ module.exports = {
         );
         return {
           data: {
-            user: checkUser,
+            user: {
+              id: checkUser.id,
+              username: checkUser.username,
+              email: checkUser.email,
+              phone: checkUser.phone,
+              picture: checkUser.picture,
+              role: checkUser.role,
+              address: checkUser.address
+            },
             refreshToken: refreshToken,
             accessToken: accessToken,
           },

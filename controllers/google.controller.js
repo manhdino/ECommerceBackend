@@ -12,11 +12,12 @@ const redirectAuth = async (req, res) => {
 const getInforFromGoogle = async (req, res) => {
   try {
     const { tokens } = await googleService.oAuth2client.getToken(
-      req.body.code
+      req.body.codeAuth
     );
     const userInfo = await googleService.getUserInfo(tokens.access_token);
+    console.log(userInfo)
     const response = await googleService.findOrCreateUser(userInfo);
-
+    // console.log(response);
     if (!response.error) {
       rs.success(res, response)
     } else {
