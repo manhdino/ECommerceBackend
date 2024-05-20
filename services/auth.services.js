@@ -187,7 +187,7 @@ module.exports = {
       const token = jwt.sign(
         { userId: checkUser.id, passwordCode: passwordCode },
         process.env.JWT_SECRET_KEY,
-        { expiresIn: "5h" }
+        { expiresIn: "5m" }
       );
       const resetLink = `${protocol}://${host}/api/auth/verify-link?token=${token}`;
       const html = emailContent(checkUser.username, resetLink);
