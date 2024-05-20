@@ -32,7 +32,12 @@ module.exports = {
           error: "Email not found",
         };
       }
-      if (!checkUser.google_id) {
+      if (checkUser.google_id) {
+        return {
+          error: "This email is registered as a Google account"
+        }
+      }
+      else {
         const isPasswordValid = await bcrypt.compare(
           password,
           checkUser.password
@@ -146,6 +151,7 @@ module.exports = {
         },
       });
       if (userInfo.passwordCode != checkUser.password_code) {
+        return rs.unauthorized(res, "Unauthorized");
       }
       const hashedPassword = await bcrypt.hash(password, 10);
       checkUser.password = hashedPassword;
