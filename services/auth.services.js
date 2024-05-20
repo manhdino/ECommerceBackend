@@ -75,7 +75,7 @@ module.exports = {
         where: {
           id: checkUser.id,
         },
-        attributes: { exclude: ["password", "refresh_token", "password_code"] },
+        attributes: { exclude: ["password", "refresh_token", "password_code", "google_id"] },
       });
       return {
         data: user,
@@ -117,7 +117,7 @@ module.exports = {
         where: {
           id: newUser.id,
         },
-        attributes: { exclude: ["password", "refresh_token"] },
+        attributes: { exclude: ["password", "refresh_token", "password_code", "google_id"] },
       });
       return {
         data: user,
