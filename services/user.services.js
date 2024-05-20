@@ -98,6 +98,11 @@ module.exports = {
           error: "User not found",
         };
       }
+      else if (checkUser.google_id) {
+        return {
+          error: "Email is registered as a Google account"
+        }
+      }
       const { oldPassword, password } = data;
 
       const isPasswordValid = await bcrypt.compare(

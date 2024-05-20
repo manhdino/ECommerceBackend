@@ -75,7 +75,7 @@ module.exports = {
         where: {
           id: checkUser.id,
         },
-        attributes: { exclude: ["password", "refresh_token"] },
+        attributes: { exclude: ["password", "refresh_token", "password_code"] },
       });
       return {
         data: user,
