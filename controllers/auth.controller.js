@@ -98,13 +98,18 @@ module.exports = {
     return rs.success(res, response);
   },
   verifyLink: async (req, res) => {
-    const token = req.query.token;
-    const response = await authService.verifyLink(token);
-    if (response.error) {
-      res.redirect("http://localhost:5173/error");
-    } else {
-      res
-        .redirect(`http://localhost:5173/reset-password?token=${token}`);
+    try {
+      const token = req.query.token;
+      const response = await authService.verifyLink(token);
+      if (response.error) {
+        res.redirect("http://localhost:5173/error");
+      } else {
+        res
+          .redirect(`http://localhost:5173/reset-password?token=${token}`);
+      }
+    }
+    catch(err) {
+      res.redirect("http://localhost:5173/error")
     }
   },
 
